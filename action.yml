@@ -1,0 +1,10 @@
+name: 'Wayback Machine'
+description: 'Action for submitting a website to the Wayback Machine'
+author: 'Jamie Magee'
+inputs:
+  url:
+    required: true
+    description: 'URL to submit to the wayback machine'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>renovatebot/presets-internal"],
+  "packageRules": [
+    {
+      "updateTypes": ["lockFileMaintenance"],
+      "semanticCommitType": "build"
+    }
+  ]
+}

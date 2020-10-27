@@ -1,0 +1,14 @@
+node_modules/
+.vs/
+dist/
+coverage/
+yarn.lock
+
+.editorconfig
+.*ignore
+.npmrc
+.yarnrc
+.yarnclean
+
+*.snap
+*.sh

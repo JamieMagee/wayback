@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`works 1`] = `
+Array [
+  Array [
+    "[[34mDEBUG[39m] test",
+  ],
+  Array [
+    Object {
+      "code": 1,
+      "name": "test",
+    },
+  ],
+  Array [
+    "[[32m INFO[39m] [90mtest[39m it",
+  ],
+  Array [
+    "[[35m WARN[39m] [33mtest[39m it",
+  ],
+  Array [
+    "[[31mERROR[39m] [31mtest[39m",
+  ],
+]
+`;

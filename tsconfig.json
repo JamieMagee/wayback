@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "outDir": "./dist",
+    "target": "es2018",
+    "module": "commonjs",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": false,
+    "lib": ["es2018"],
+    "types": ["node", "jest"]
+  },
+  "exclude": ["node_modules", "**/__mocks__/*"]
+}
