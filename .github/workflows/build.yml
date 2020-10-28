@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches:
-      - master
+      - main
       - 'renovate/**'
 
   pull_request:
@@ -43,7 +43,7 @@ jobs:
 
       # Clear caches on cache miss, otherwise they will grow indefinitely
       - name: Clear yarn cache
-        if: steps.yarn_cache_packages.outputs.cache-hit != 'true' && github.ref == 'refs/heads/master'
+        if: steps.yarn_cache_packages.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
         run: yarn cache clean
 
       - run: yarn install --frozen-lockfile
@@ -167,13 +167,13 @@ jobs:
 
       - name: Push release branch
         run: git push origin release:release
-        if: ${{github.ref == 'refs/heads/master'}}
+        if: ${{github.ref == 'refs/heads/main'}}
 
       - name: Release
         run: |
           # override for semantic-release
           export GITHUB_REF=refs/heads/release GITHUB_SHA=${{ steps.merge.outputs.commit }}
           yarn release
-        if: ${{github.ref == 'refs/heads/master'}}
+        if: ${{github.ref == 'refs/heads/main'}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
