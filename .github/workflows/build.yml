@@ -142,7 +142,7 @@ jobs:
       - name: Merge
         id: merge
         run: |
-          git merge --no-ff -m 'skip: merge (${{ github.sha }}) [skip release]' ${{ github.sha }}
+          git merge --allow-unrelated-histories --no-ff -m 'skip: merge (${{ github.sha }}) [skip release]' ${{ github.sha }}
           commit=$(git rev-parse HEAD)
           echo "::set-output name=commit::${commit}"
 
