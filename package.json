@@ -28,9 +28,9 @@
   "dependencies": {
     "@actions/core": "1.2.6",
     "axios": "0.21.0",
-    "chalk": "^4.1.0",
+    "chalk": "4.1.0",
     "form-data": "3.0.0",
-    "strip-ansi": "^6.0.0"
+    "strip-ansi": "6.0.0"
   },
   "devDependencies": {
     "@jest/globals": "26.6.1",
