@@ -3,6 +3,7 @@ node_modules/
 dist/
 coverage/
 yarn.lock
+**/__fixtures__/*.html
 
 .editorconfig
 .*ignore
