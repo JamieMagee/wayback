@@ -16,11 +16,11 @@ function debug(msg: unknown, ...args: unknown[]): void {
 }
 
 function info(msg: unknown, ...args: unknown[]): void {
-  write(chalk.green(' INFO'), msg, ...args);
+  write(chalk.green('INFO'), msg, ...args);
 }
 
 function warn(msg: unknown, ...args: unknown[]): void {
-  write(chalk.magenta(' WARN'), msg, ...args);
+  write(chalk.magenta('WARN'), msg, ...args);
   _warn(stripAnsi([msg, ...args].join(' ')));
 }
 
@@ -32,6 +32,7 @@ function error(msg: unknown, ...args: unknown[]): void {
 const log = (m: unknown, ...args: unknown[]): void => debug(m, ...args);
 
 log.dir = (m: unknown): void => dir(m);
+log.debug = (m: unknown, ...args: unknown[]): void => info(m, ...args);
 log.info = (m: unknown, ...args: unknown[]): void => info(m, ...args);
 log.warn = (m: unknown, ...args: unknown[]): void => warn(m, ...args);
 log.error = (m: unknown, ...args: unknown[]): void => error(m, ...args);

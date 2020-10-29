@@ -12,10 +12,10 @@ Array [
     },
   ],
   Array [
-    "[[32m INFO[39m] [90mtest[39m it",
+    "[[32mINFO[39m] [90mtest[39m it",
   ],
   Array [
-    "[[35m WARN[39m] [33mtest[39m it",
+    "[[35mWARN[39m] [33mtest[39m it",
   ],
   Array [
     "[[31mERROR[39m] [31mtest[39m",
