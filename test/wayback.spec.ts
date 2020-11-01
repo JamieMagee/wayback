@@ -4,6 +4,7 @@ import WayBack from '../src/wayback';
 import { getName } from './utils';
 
 const testGuid = 'c6721763-2d90-421d-999f-b0d8d9f65b6b';
+const testDomain = 'example.com';
 const htmlResponse = fs.readFileSync('test/__fixtures__/save.html');
 const pendingJson = fs.readFileSync('test/__fixtures__/wayback.pending.json');
 const successJson = fs.readFileSync('test/__fixtures__/wayback.success.json');
@@ -21,41 +22,55 @@ describe(getName(__filename), () => {
 
   it('works', async () => {
     waybackScope
-      .post('/example.com')
+      .post(`/${testDomain}`)
       .reply(200, htmlResponse)
       .get(`/status/${testGuid}`)
       .reply(200, successJson);
-    const wayback = new WayBack('example.com');
+    const wayback = new WayBack(testDomain);
     await wayback.save();
     expect(nock.isDone()).toBe(true);
   });
 
   it('polls', async () => {
     waybackScope
-      .post('/example.com')
+      .post(`/${testDomain}`)
       .reply(200, htmlResponse)
       .get(`/status/${testGuid}`)
       .reply(200, pendingJson)
       .get(`/status/${testGuid}`)
       .reply(200, successJson);
-    const wayback = new WayBack('example.com');
+    const wayback = new WayBack(testDomain);
     await wayback.save();
     expect(nock.isDone()).toBe(true);
   });
 
   it('submit to throw', async () => {
-    waybackScope.post('/example.com').reply(500);
-    const wayback = new WayBack('example.com');
+    waybackScope.post(`/${testDomain}`).reply(500);
+    const wayback = new WayBack(testDomain);
     await expect(wayback.save()).rejects.toThrow();
   });
 
   it('to throw', async () => {
     waybackScope
-      .post('/example.com')
+      .post(`/${testDomain}`)
       .reply(200, htmlResponse)
       .get(`/status/${testGuid}`)
       .reply(404);
-    const wayback = new WayBack('example.com');
+    const wayback = new WayBack(testDomain);
+    await expect(wayback.save()).rejects.toThrow();
+  });
+
+  it.each([
+    ['AdministrativeAccessControlException'],
+    ['RobotAccessControlException'],
+    ['LiveDocumentNotAvailableException'],
+    ['LiveWebCacheUnavailableException'],
+    ['Unknown'],
+  ])('handles %s header', async (header) => {
+    waybackScope.post(`/${testDomain}`).reply(502, undefined, {
+      'x-archive-wayback-runtime-error': header,
+    });
+    const wayback = new WayBack(testDomain);
     await expect(wayback.save()).rejects.toThrow();
   });
 });
