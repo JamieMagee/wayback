@@ -4,6 +4,8 @@ export interface SaveStatus {
   outlinks?: string[];
   timestamp?: string;
   original_url?: string;
-  status?: 'success' | 'pending' | string;
+  status?: 'success' | 'pending' | 'error' | string;
+  status_ext?: string;
   duration_sec?: number;
+  message: string;
 }

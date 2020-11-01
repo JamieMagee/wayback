@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import { SaveStatus } from './types';
 import log from './utils/logger';
@@ -28,24 +28,44 @@ export default class WayBack {
         },
       });
       const match = WayBack.statusGuidRegex.exec(res.data);
-      if (match) {
+      if (match && match.groups?.guid) {
         const guid = match.groups?.guid;
-        if (guid) {
-          const saveStatus = await this.pollStatus(guid);
-          this.handleResponse(saveStatus);
-        } else {
-          log.error(`Unable to fetch status for ${this.url}`);
-        }
+        const saveStatus = await this.pollStatus(guid);
+        this.handleStatusResponse(saveStatus);
       } else {
-        log.error(`Unable to fetch status for ${this.url}`);
+        log.error('Unable to fetch status');
+        throw new Error();
       }
     } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.handleErrorResponse(err.response as AxiosResponse);
       log.error((err as Error).message);
       throw err;
     }
   }
 
-  private handleResponse(saveStatus: SaveStatus): void {
+  private handleErrorResponse(response: AxiosResponse): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    const error: string = response.headers?.['x-archive-wayback-runtime-error'];
+    if (error) {
+      switch (error) {
+        case 'AdministrativeAccessControlException':
+          log.error('This site is excluded from the Wayback Machine.');
+          break;
+        case 'RobotAccessControlException':
+          log.error('Blocked by robots.txt.');
+          break;
+        case 'LiveDocumentNotAvailableException':
+        case 'LiveWebCacheUnavailableException':
+          log.error('Unable to archive page. Try again later.');
+          break;
+        default:
+          log.error('An unknown error occurred.', error);
+      }
+    }
+  }
+
+  private handleStatusResponse(saveStatus: SaveStatus): void {
     switch (saveStatus.status) {
       case 'success':
         log.info(this.getArchiveUrl(saveStatus));
