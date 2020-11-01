@@ -243,7 +243,7 @@ class WayBack {
         this.url = url;
     }
     async save() {
-        var _a;
+        var _a, _b;
         const requestUrl = `${WayBack.baseWaybackUrl}/${this.url}`;
         const form = new form_data_1.default();
         form.append('url', this.url);
@@ -258,26 +258,45 @@ class WayBack {
                 },
             });
             const match = WayBack.statusGuidRegex.exec(res.data);
-            if (match) {
-                const guid = (_a = match.groups) === null || _a === void 0 ? void 0 : _a.guid;
-                if (guid) {
-                    const saveStatus = await this.pollStatus(guid);
-                    this.handleResponse(saveStatus);
-                }
-                else {
-                    logger_1.default.error(`Unable to fetch status for ${this.url}`);
-                }
+            if (match && ((_a = match.groups) === null || _a === void 0 ? void 0 : _a.guid)) {
+                const guid = (_b = match.groups) === null || _b === void 0 ? void 0 : _b.guid;
+                const saveStatus = await this.pollStatus(guid);
+                this.handleStatusResponse(saveStatus);
             }
             else {
-                logger_1.default.error(`Unable to fetch status for ${this.url}`);
+                logger_1.default.error('Unable to fetch status');
+                throw new Error();
             }
         }
         catch (err) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            this.handleErrorResponse(err.response);
             logger_1.default.error(err.message);
             throw err;
         }
     }
-    handleResponse(saveStatus) {
+    handleErrorResponse(response) {
+        var _a;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+        const error = (_a = response.headers) === null || _a === void 0 ? void 0 : _a['x-archive-wayback-runtime-error'];
+        if (error) {
+            switch (error) {
+                case 'AdministrativeAccessControlException':
+                    logger_1.default.error('This site is excluded from the Wayback Machine.');
+                    break;
+                case 'RobotAccessControlException':
+                    logger_1.default.error('Blocked by robots.txt.');
+                    break;
+                case 'LiveDocumentNotAvailableException':
+                case 'LiveWebCacheUnavailableException':
+                    logger_1.default.error('Unable to archive page. Try again later.');
+                    break;
+                default:
+                    logger_1.default.error('An unknown error occurred.', error);
+            }
+        }
+    }
+    handleStatusResponse(saveStatus) {
         switch (saveStatus.status) {
             case 'success':
                 logger_1.default.info(this.getArchiveUrl(saveStatus));
