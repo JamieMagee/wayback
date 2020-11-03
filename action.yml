@@ -1,6 +1,9 @@
 name: 'Wayback Machine'
 description: 'Action for submitting a website to the Wayback Machine'
 author: 'Jamie Magee'
+branding:
+  icon: 'clock'
+  color: 'red'
 inputs:
   url:
     required: true
