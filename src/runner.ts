@@ -5,7 +5,7 @@ import WayBack from './wayback';
 export default async function run(): Promise<void> {
   try {
     const input = new Input();
-    const wayback = new WayBack(input.url);
+    const wayback = new WayBack(input);
 
     await wayback.save();
   } catch (error) {

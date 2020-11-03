@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
+import Input from './input';
 import { SaveStatus } from './types';
 import log from './utils/logger';
 
@@ -7,18 +8,30 @@ export default class WayBack {
   private static readonly baseWaybackUrl = 'https://web.archive.org/save';
   private static readonly statusGuidRegex = /watchJob\("(?<guid>[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/;
   private url: string;
+  private saveErrors: boolean;
+  private saveOutlinks: boolean;
+  private saveScreenshot: boolean;
 
-  constructor(url: string) {
-    this.url = url;
+  constructor(input: Input) {
+    this.url = input.url;
+    this.saveErrors = input.saveErrors;
+    this.saveOutlinks = input.saveOutlinks;
+    this.saveScreenshot = input.saveScreenshot;
   }
 
   public async save(): Promise<void> {
     const requestUrl = `${WayBack.baseWaybackUrl}/${this.url}`;
     const form = new FormData();
     form.append('url', this.url);
-    form.append('capture_all', 'on');
-    // form.append('capture_outlinks', 'on');
-    // form.append('capture_screenshot', 'on');
+    if (this.saveErrors) {
+      form.append('capture_all', 'on');
+    }
+    if (this.saveOutlinks) {
+      form.append('capture_outlinks', 'on');
+    }
+    if (this.saveScreenshot) {
+      form.append('capture_screenshot', 'on');
+    }
 
     try {
       const res = await axios.post(requestUrl, form, {
