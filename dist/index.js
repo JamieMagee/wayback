@@ -7458,11 +7458,24 @@ const core = __importStar(__webpack_require__(5316));
 class Input {
     constructor() {
         this.url = core.getInput('url', { required: true });
+        this.saveErrors = this.toBoolean(core.getInput('saveErrors'));
+        this.saveOutlinks = this.toBoolean(core.getInput('saveOutlinks'));
+        this.saveScreenshot = this.toBoolean(core.getInput('saveScreenshot'));
         this.validate();
     }
     validate() {
         if (this.url === '') {
             throw new Error('input.url must not be empty');
+        }
+    }
+    toBoolean(input) {
+        switch (input.toLowerCase()) {
+            case 'true':
+                return true;
+            case 'false':
+                return false;
+            default:
+                throw new Error();
         }
     }
 }
@@ -7486,7 +7499,7 @@ const wayback_1 = __importDefault(__webpack_require__(7300));
 async function run() {
     try {
         const input = new input_1.default();
-        const wayback = new wayback_1.default(input.url);
+        const wayback = new wayback_1.default(input);
         await wayback.save();
     }
     catch (error) {
@@ -7555,17 +7568,26 @@ const axios_1 = __importDefault(__webpack_require__(8577));
 const form_data_1 = __importDefault(__webpack_require__(2220));
 const logger_1 = __importDefault(__webpack_require__(2722));
 class WayBack {
-    constructor(url) {
-        this.url = url;
+    constructor(input) {
+        this.url = input.url;
+        this.saveErrors = input.saveErrors;
+        this.saveOutlinks = input.saveOutlinks;
+        this.saveScreenshot = input.saveScreenshot;
     }
     async save() {
         var _a, _b;
         const requestUrl = `${WayBack.baseWaybackUrl}/${this.url}`;
         const form = new form_data_1.default();
         form.append('url', this.url);
-        form.append('capture_all', 'on');
-        // form.append('capture_outlinks', 'on');
-        // form.append('capture_screenshot', 'on');
+        if (this.saveErrors) {
+            form.append('capture_all', 'on');
+        }
+        if (this.saveOutlinks) {
+            form.append('capture_outlinks', 'on');
+        }
+        if (this.saveScreenshot) {
+            form.append('capture_screenshot', 'on');
+        }
         try {
             const res = await axios_1.default.post(requestUrl, form, {
                 headers: {
