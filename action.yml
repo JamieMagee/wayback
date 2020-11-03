@@ -5,6 +5,18 @@ inputs:
   url:
     required: true
     description: 'URL to submit to the wayback machine'
+  saveErrors:
+    required: false
+    default: 'true'
+    description: 'If true, save HTTP errors as well'
+  saveOutlinks:
+    required: false
+    default: 'false'
+    description: 'If true, save all links to external sites'
+  saveScreenshot:
+    required: false
+    default: 'false'
+    description: 'If true, save a screenshot of the site'
 runs:
   using: 'node12'
   main: 'dist/index.js'

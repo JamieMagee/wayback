@@ -13,5 +13,5 @@
     "lib": ["es2018"],
     "types": ["node", "jest"]
   },
-  "exclude": ["node_modules", "**/__mocks__/*"]
+  "exclude": ["node_modules"]
 }

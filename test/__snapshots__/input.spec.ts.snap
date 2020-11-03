@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`works 1`] = `
+Array [
+  Array [
+    "url",
+    Object {
+      "required": true,
+    },
+  ],
+  Array [
+    "saveErrors",
+  ],
+  Array [
+    "saveOutlinks",
+  ],
+  Array [
+    "saveScreenshot",
+  ],
+]
+`;
+
+exports[`works 2`] = `
+Input {
+  "saveErrors": true,
+  "saveOutlinks": false,
+  "saveScreenshot": true,
+  "url": "example.com",
+}
+`;
