@@ -6045,14 +6045,19 @@ DelayedStream.prototype._checkIfMaxDataSizeExceeded = function() {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 var debug;
-try {
-  /* eslint global-require: off */
-  debug = __nccwpck_require__(2512)("follow-redirects");
-}
-catch (error) {
-  debug = function () { /* */ };
-}
-module.exports = debug;
+
+module.exports = function () {
+  if (!debug) {
+    try {
+      /* eslint global-require: off */
+      debug = __nccwpck_require__(2512)("follow-redirects");
+    }
+    catch (error) {
+      debug = function () { /* */ };
+    }
+  }
+  debug.apply(null, arguments);
+};
 
 
 /***/ }),
