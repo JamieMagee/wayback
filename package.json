@@ -29,7 +29,7 @@
     "@actions/core": "1.2.6",
     "axios": "0.21.1",
     "chalk": "4.1.0",
-    "form-data": "3.0.0",
+    "form-data": "3.0.1",
     "strip-ansi": "6.0.0"
   },
   "devDependencies": {
