@@ -6883,6 +6883,10 @@ FormData.prototype.getHeaders = function(userHeaders) {
   return formHeaders;
 };
 
+FormData.prototype.setBoundary = function(boundary) {
+  this._boundary = boundary;
+};
+
 FormData.prototype.getBoundary = function() {
   if (!this._boundary) {
     this._generateBoundary();
