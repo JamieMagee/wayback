@@ -13,7 +13,7 @@ Save pages to the [Wayback Machine](https://web.archive.org/) as part of your CI
 
 ```yaml
 name: Save my blog
-uses: JamieMagee/wayback@v1.1.1
+uses: JamieMagee/wayback@v1.2.16
 with:
   url: jamiemagee.co.uk
 ```
@@ -22,7 +22,7 @@ with:
 
 ```yaml
 name: Save my blog
-uses: JamieMagee/wayback@v1.1.1
+uses: JamieMagee/wayback@v1.2.16
 with:
   url: jamiemagee.co.uk
   saveErrors: false
