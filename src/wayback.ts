@@ -1,3 +1,4 @@
+import * as core from '@actions/core';
 import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import Input from './input';
@@ -114,10 +115,15 @@ export default class WayBack {
 
   private getArchiveUrl(saveStatus: SaveStatus): string | undefined {
     if (!(saveStatus.status === 'success')) {
+      core.setOutput('WAYBACK_URL', null);
       return undefined;
     }
     // original_url is present when status === 'success'
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    core.setOutput(
+      'WAYBACK_URL',
+      `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`
+    );
     return `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
   }
 }
