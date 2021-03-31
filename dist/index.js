@@ -7772,12 +7772,14 @@ class WayBack {
     }
     getArchiveUrl(saveStatus) {
         if (!(saveStatus.status === 'success')) {
-            core.setOutput("WAYBACK_URL", null);
+            core.setOutput('WAYBACK_URL', null);
             return undefined;
         }
         // original_url is present when status === 'success'
+        core.setOutput(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        core.setOutput("WAYBACK_URL", `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`);
+        'WAYBACK_URL', `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`);
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         return `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
     }
 }

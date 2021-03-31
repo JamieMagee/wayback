@@ -119,11 +119,12 @@ export default class WayBack {
       return undefined;
     }
     // original_url is present when status === 'success'
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     core.setOutput(
       'WAYBACK_URL',
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`
     );
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     return `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
   }
 }
