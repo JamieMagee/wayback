@@ -48,6 +48,12 @@ If `true`, the Wayback Machine will save any links to external web pages. Defaul
 
 If `true`, the Wayback Machine will save a screenshot of the web page. Defaults to `false`.
 
+## Outputs
+
+### `wayback_url`
+
+If the save attempt was successful, this parameter is set to the Wayback Machine URL. If the attempt failed, it is set to an empty string.
+
 ## License
 
 Code in this repository is licensed under the MIT license. Details can be found in the [LICENSE](https://github.com/JamieMagee/wayback/blob/main/LICENSE) file.

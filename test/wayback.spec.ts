@@ -1,4 +1,5 @@
 import fs from 'fs';
+import * as core from '@actions/core';
 import nock from 'nock';
 import Input from '../src/input';
 import WayBack from '../src/wayback';
@@ -7,6 +8,8 @@ import { getName } from './utils';
 jest.mock('../src/input');
 const testGuid = 'c6721763-2d90-421d-999f-b0d8d9f65b6b';
 const testDomain = 'example.com';
+const testOutput =
+  'https://web.archive.org/web/20201029093810/https://www.example.com';
 const htmlResponse = fs.readFileSync('test/__fixtures__/save.html');
 const pendingJson = fs.readFileSync('test/__fixtures__/wayback.pending.json');
 const successJson = fs.readFileSync('test/__fixtures__/wayback.success.json');
@@ -32,6 +35,8 @@ describe(getName(__filename), () => {
       .reply(200, successJson);
     const wayback = new WayBack(input);
     await wayback.save();
+    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledWith('wayback_url', testOutput);
     expect(nock.isDone()).toBe(true);
   });
 
@@ -45,6 +50,8 @@ describe(getName(__filename), () => {
       .reply(200, successJson);
     const wayback = new WayBack(input);
     await wayback.save();
+    expect(core.setOutput).toHaveBeenCalledTimes(1);
+    expect(core.setOutput).toHaveBeenCalledWith('wayback_url', testOutput);
     expect(nock.isDone()).toBe(true);
   });
 
@@ -52,6 +59,7 @@ describe(getName(__filename), () => {
     waybackScope.post(`/${testDomain}`).reply(500);
     const wayback = new WayBack(input);
     await expect(wayback.save()).rejects.toThrow();
+    expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 
   it('to throw', async () => {
@@ -62,6 +70,7 @@ describe(getName(__filename), () => {
       .reply(404);
     const wayback = new WayBack(input);
     await expect(wayback.save()).rejects.toThrow();
+    expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 
   it.each([
@@ -76,5 +85,6 @@ describe(getName(__filename), () => {
     });
     const wayback = new WayBack(input);
     await expect(wayback.save()).rejects.toThrow();
+    expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 });
