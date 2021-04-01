@@ -20,6 +20,9 @@ inputs:
     required: false
     default: 'false'
     description: 'If true, save a screenshot of the site'
+outputs:
+  wayback_url:
+    description: 'The Wayback Machine URL'
 runs:
   using: 'node12'
   main: 'dist/index.js'
