@@ -1,3 +1,4 @@
+import * as core from '@actions/core';
 import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import Input from './input';
@@ -58,8 +59,9 @@ export default class WayBack {
   }
 
   private handleErrorResponse(response: AxiosResponse): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-    const error: string = response.headers?.['x-archive-wayback-runtime-error'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const error: string = // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      response?.headers?.['x-archive-wayback-runtime-error'];
     if (error) {
       switch (error) {
         case 'AdministrativeAccessControlException':
@@ -113,11 +115,10 @@ export default class WayBack {
   }
 
   private getArchiveUrl(saveStatus: SaveStatus): string | undefined {
-    if (!(saveStatus.status === 'success')) {
-      return undefined;
-    }
     // original_url is present when status === 'success'
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    return `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
+    const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
+    core.setOutput('wayback_url', archiveUrl);
+    return archiveUrl;
   }
 }

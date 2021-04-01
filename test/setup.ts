@@ -10,6 +10,7 @@ const core = mocked(_core);
 beforeAll(() => {
   nock.disableNetConnect();
   core.getInput.mockReturnValue('');
+  core.setOutput = jest.fn();
 });
 
 afterAll(() => {
