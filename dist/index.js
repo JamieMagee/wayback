@@ -7647,10 +7647,30 @@ exports.default = log;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(5316));
 const axios_1 = __importDefault(__nccwpck_require__(8577));
 const form_data_1 = __importDefault(__nccwpck_require__(2220));
 const logger_1 = __importDefault(__nccwpck_require__(2722));
@@ -7702,8 +7722,8 @@ class WayBack {
     }
     handleErrorResponse(response) {
         var _a;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-        const error = (_a = response.headers) === null || _a === void 0 ? void 0 : _a['x-archive-wayback-runtime-error'];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const error = (_a = response === null || response === void 0 ? void 0 : response.headers) === null || _a === void 0 ? void 0 : _a['x-archive-wayback-runtime-error'];
         if (error) {
             switch (error) {
                 case 'AdministrativeAccessControlException':
@@ -7751,12 +7771,11 @@ class WayBack {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
     getArchiveUrl(saveStatus) {
-        if (!(saveStatus.status === 'success')) {
-            return undefined;
-        }
         // original_url is present when status === 'success'
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        return `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
+        const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
+        core.setOutput('wayback_url', archiveUrl);
+        return archiveUrl;
     }
 }
 exports.default = WayBack;
