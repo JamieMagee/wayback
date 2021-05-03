@@ -107,7 +107,7 @@ jobs:
           path: coverage
 
       - name: Codecov
-        uses: codecov/codecov-action@v1.4.1
+        uses: codecov/codecov-action@v1.5.0
 
   release:
     needs: [test]
