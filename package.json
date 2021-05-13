@@ -19,6 +19,7 @@
     "eslint": "eslint .",
     "eslint:fix": "yarn eslint --fix",
     "lint": "run-s eslint prettier",
+    "prepare": "husky install",
     "prerelease": "run-s clean compile",
     "prettier": "prettier \"{**/*,*}.*\" --list-different",
     "prettier:fix": "prettier \"{**/*,*}.*\" --write",
