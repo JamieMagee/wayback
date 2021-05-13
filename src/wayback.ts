@@ -7,7 +7,8 @@ import log from './utils/logger';
 
 export default class WayBack {
   private static readonly baseWaybackUrl = 'https://web.archive.org/save';
-  private static readonly statusGuidRegex = /watchJob\("(?<guid>[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/;
+  private static readonly statusGuidRegex =
+    /watchJob\("(?<guid>[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/;
   private url: string;
   private saveErrors: boolean;
   private saveOutlinks: boolean;
