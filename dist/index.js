@@ -515,7 +515,7 @@ exports.toCommandProperties = toCommandProperties;
 
 module.exports = ({onlyFirst = false} = {}) => {
 	const pattern = [
-		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
 		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
 	].join('|');
 
@@ -6585,10 +6585,8 @@ RedirectableRequest.prototype.removeHeader = function (name) {
 // Global timeout for all underlying requests
 RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
   var self = this;
-  if (callback) {
-    this.on("timeout", callback);
-  }
 
+  // Destroys the socket on timeout
   function destroyOnTimeout(socket) {
     socket.setTimeout(msecs);
     socket.removeListener("timeout", socket.destroy);
@@ -6607,18 +6605,26 @@ RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
     destroyOnTimeout(socket);
   }
 
-  // Prevent a timeout from triggering
+  // Stops a timeout from triggering
   function clearTimer() {
-    clearTimeout(self._timeout);
+    if (self._timeout) {
+      clearTimeout(self._timeout);
+      self._timeout = null;
+    }
     if (callback) {
       self.removeListener("timeout", callback);
     }
-    if (!this.socket) {
+    if (!self.socket) {
       self._currentRequest.removeListener("socket", startTimer);
     }
   }
 
-  // Start the timer when the socket is opened
+  // Attach callback if passed
+  if (callback) {
+    this.on("timeout", callback);
+  }
+
+  // Start the timer if or when the socket is opened
   if (this.socket) {
     startTimer(this.socket);
   }
@@ -6626,6 +6632,7 @@ RedirectableRequest.prototype.setTimeout = function (msecs, callback) {
     this._currentRequest.once("socket", startTimer);
   }
 
+  // Clean up on events
   this.on("socket", destroyOnTimeout);
   this.once("response", clearTimer);
   this.once("error", clearTimer);
@@ -7881,6 +7888,290 @@ module.exports = {
 
 /***/ }),
 
+/***/ 8746:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const runner_1 = __importDefault(__nccwpck_require__(5857));
+runner_1.default().catch(console.error);
+
+
+/***/ }),
+
+/***/ 1851:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(5316));
+class Input {
+    constructor() {
+        this.url = core.getInput('url', { required: true });
+        this.saveErrors = this.toBoolean(core.getInput('saveErrors'));
+        this.saveOutlinks = this.toBoolean(core.getInput('saveOutlinks'));
+        this.saveScreenshot = this.toBoolean(core.getInput('saveScreenshot'));
+        this.validate();
+    }
+    validate() {
+        if (this.url === '') {
+            throw new Error('input.url must not be empty');
+        }
+    }
+    toBoolean(input) {
+        switch (input.toLowerCase()) {
+            case 'true':
+                return true;
+            case 'false':
+                return false;
+            default:
+                throw new Error();
+        }
+    }
+}
+exports.default = Input;
+
+
+/***/ }),
+
+/***/ 5857:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core_1 = __nccwpck_require__(5316);
+const input_1 = __importDefault(__nccwpck_require__(1851));
+const wayback_1 = __importDefault(__nccwpck_require__(7300));
+async function run() {
+    try {
+        const input = new input_1.default();
+        const wayback = new wayback_1.default(input);
+        await wayback.save();
+    }
+    catch (error) {
+        core_1.setFailed(error.message);
+    }
+}
+exports.default = run;
+
+
+/***/ }),
+
+/***/ 2722:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core_1 = __nccwpck_require__(5316);
+const chalk_1 = __importDefault(__nccwpck_require__(816));
+// eslint-disable-next-line import/default
+const strip_ansi_1 = __importDefault(__nccwpck_require__(8941));
+function write(prefix, ...args) {
+    console.log([`[${prefix}]`, ...args].join(' '));
+}
+function dir(obj) {
+    console.dir(obj);
+}
+function debug(msg, ...args) {
+    write(chalk_1.default.blue('DEBUG'), msg, ...args);
+}
+function info(msg, ...args) {
+    write(chalk_1.default.green('INFO'), msg, ...args);
+}
+function warn(msg, ...args) {
+    write(chalk_1.default.magenta('WARN'), msg, ...args);
+    core_1.warning(strip_ansi_1.default([msg, ...args].join(' ')));
+}
+function error(msg, ...args) {
+    write(chalk_1.default.red('ERROR'), msg, ...args);
+    core_1.error(strip_ansi_1.default([msg, ...args].join(' ')));
+}
+const log = (m, ...args) => debug(m, ...args);
+log.dir = (m) => dir(m);
+log.debug = (m, ...args) => info(m, ...args);
+log.info = (m, ...args) => info(m, ...args);
+log.warn = (m, ...args) => warn(m, ...args);
+log.error = (m, ...args) => error(m, ...args);
+exports.default = log;
+
+
+/***/ }),
+
+/***/ 7300:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(5316));
+const axios_1 = __importDefault(__nccwpck_require__(8577));
+const form_data_1 = __importDefault(__nccwpck_require__(2220));
+const logger_1 = __importDefault(__nccwpck_require__(2722));
+class WayBack {
+    constructor(input) {
+        this.url = input.url;
+        this.saveErrors = input.saveErrors;
+        this.saveOutlinks = input.saveOutlinks;
+        this.saveScreenshot = input.saveScreenshot;
+    }
+    async save() {
+        var _a, _b;
+        const requestUrl = `${WayBack.baseWaybackUrl}/${this.url}`;
+        const form = new form_data_1.default();
+        form.append('url', this.url);
+        if (this.saveErrors) {
+            form.append('capture_all', 'on');
+        }
+        if (this.saveOutlinks) {
+            form.append('capture_outlinks', 'on');
+        }
+        if (this.saveScreenshot) {
+            form.append('capture_screenshot', 'on');
+        }
+        try {
+            const res = await axios_1.default.post(requestUrl, form, {
+                headers: {
+                    'User-Agent': 'https://github.com/JamieMagee/wayback',
+                    ...form.getHeaders(),
+                },
+            });
+            const match = WayBack.statusGuidRegex.exec(res.data);
+            if (match && ((_a = match.groups) === null || _a === void 0 ? void 0 : _a.guid)) {
+                const guid = (_b = match.groups) === null || _b === void 0 ? void 0 : _b.guid;
+                const saveStatus = await this.pollStatus(guid);
+                this.handleStatusResponse(saveStatus);
+            }
+            else {
+                logger_1.default.error('Unable to fetch status');
+                throw new Error();
+            }
+        }
+        catch (err) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            this.handleErrorResponse(err.response);
+            logger_1.default.error(err.message);
+            throw err;
+        }
+    }
+    handleErrorResponse(response) {
+        var _a;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const error = (_a = response === null || response === void 0 ? void 0 : response.headers) === null || _a === void 0 ? void 0 : _a['x-archive-wayback-runtime-error'];
+        if (error) {
+            switch (error) {
+                case 'AdministrativeAccessControlException':
+                    logger_1.default.error('This site is excluded from the Wayback Machine.');
+                    break;
+                case 'RobotAccessControlException':
+                    logger_1.default.error('Blocked by robots.txt.');
+                    break;
+                case 'LiveDocumentNotAvailableException':
+                case 'LiveWebCacheUnavailableException':
+                    logger_1.default.error('Unable to archive page. Try again later.');
+                    break;
+                default:
+                    logger_1.default.error('An unknown error occurred.', error);
+            }
+        }
+    }
+    handleStatusResponse(saveStatus) {
+        switch (saveStatus.status) {
+            case 'success':
+                logger_1.default.info(this.getArchiveUrl(saveStatus));
+                break;
+            default:
+                logger_1.default.debug(saveStatus);
+        }
+    }
+    async pollStatus(guid) {
+        let saveStatus = await this.getSaveStatus(guid);
+        while (saveStatus.status === 'pending') {
+            await this.sleep(2000);
+            saveStatus = await this.getSaveStatus(guid);
+        }
+        return saveStatus;
+    }
+    async getSaveStatus(guid) {
+        try {
+            return (await axios_1.default.get(`${WayBack.baseWaybackUrl}/status/${guid}`)).data;
+        }
+        catch (err) {
+            logger_1.default.error(err.message);
+            throw err;
+        }
+    }
+    async sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    getArchiveUrl(saveStatus) {
+        // original_url is present when status === 'success'
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
+        core.setOutput('wayback_url', archiveUrl);
+        return archiveUrl;
+    }
+}
+exports.default = WayBack;
+WayBack.baseWaybackUrl = 'https://web.archive.org/save';
+WayBack.statusGuidRegex = /watchJob\("(?<guid>[0-9nps]{4}-[0-9a-f]{40}-[0-9a-f]{8})/;
+
+
+/***/ }),
+
 /***/ 2995:
 /***/ ((module) => {
 
@@ -8021,46 +8312,6 @@ module.exports = require("zlib");
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__nccwpck_require__.nmd = (module) => {
@@ -8075,220 +8326,12 @@ module.exports = require("zlib");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-// ESM COMPAT FLAG
-__nccwpck_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ../node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(5316);
-;// CONCATENATED MODULE: ./input.ts
-
-class Input {
-    constructor() {
-        this.url = core.getInput('url', { required: true });
-        this.saveErrors = this.toBoolean(core.getInput('saveErrors'));
-        this.saveOutlinks = this.toBoolean(core.getInput('saveOutlinks'));
-        this.saveScreenshot = this.toBoolean(core.getInput('saveScreenshot'));
-        this.validate();
-    }
-    validate() {
-        if (this.url === '') {
-            throw new Error('input.url must not be empty');
-        }
-    }
-    toBoolean(input) {
-        switch (input.toLowerCase()) {
-            case 'true':
-                return true;
-            case 'false':
-                return false;
-            default:
-                throw new Error();
-        }
-    }
-}
-
-// EXTERNAL MODULE: ../node_modules/axios/index.js
-var axios = __nccwpck_require__(8577);
-var axios_default = /*#__PURE__*/__nccwpck_require__.n(axios);
-// EXTERNAL MODULE: ../node_modules/form-data/lib/form_data.js
-var form_data = __nccwpck_require__(2220);
-var form_data_default = /*#__PURE__*/__nccwpck_require__.n(form_data);
-// EXTERNAL MODULE: ../node_modules/chalk/source/index.js
-var source = __nccwpck_require__(816);
-var source_default = /*#__PURE__*/__nccwpck_require__.n(source);
-// EXTERNAL MODULE: ../node_modules/strip-ansi/index.js
-var strip_ansi = __nccwpck_require__(8941);
-var strip_ansi_default = /*#__PURE__*/__nccwpck_require__.n(strip_ansi);
-;// CONCATENATED MODULE: ./utils/logger.ts
-
-
-// eslint-disable-next-line import/default
-
-function write(prefix, ...args) {
-    console.log([`[${prefix}]`, ...args].join(' '));
-}
-function dir(obj) {
-    console.dir(obj);
-}
-function debug(msg, ...args) {
-    write(source_default().blue('DEBUG'), msg, ...args);
-}
-function info(msg, ...args) {
-    write(source_default().green('INFO'), msg, ...args);
-}
-function warn(msg, ...args) {
-    write(source_default().magenta('WARN'), msg, ...args);
-    (0,core.warning)(strip_ansi_default()([msg, ...args].join(' ')));
-}
-function error(msg, ...args) {
-    write(source_default().red('ERROR'), msg, ...args);
-    (0,core.error)(strip_ansi_default()([msg, ...args].join(' ')));
-}
-const log = (m, ...args) => debug(m, ...args);
-log.dir = (m) => dir(m);
-log.debug = (m, ...args) => info(m, ...args);
-log.info = (m, ...args) => info(m, ...args);
-log.warn = (m, ...args) => warn(m, ...args);
-log.error = (m, ...args) => error(m, ...args);
-/* harmony default export */ const logger = (log);
-
-;// CONCATENATED MODULE: ./wayback.ts
-
-
-
-
-class WayBack {
-    constructor(input) {
-        this.url = input.url;
-        this.saveErrors = input.saveErrors;
-        this.saveOutlinks = input.saveOutlinks;
-        this.saveScreenshot = input.saveScreenshot;
-    }
-    async save() {
-        var _a, _b;
-        const requestUrl = `${WayBack.baseWaybackUrl}/${this.url}`;
-        const form = new (form_data_default())();
-        form.append('url', this.url);
-        if (this.saveErrors) {
-            form.append('capture_all', 'on');
-        }
-        if (this.saveOutlinks) {
-            form.append('capture_outlinks', 'on');
-        }
-        if (this.saveScreenshot) {
-            form.append('capture_screenshot', 'on');
-        }
-        try {
-            const res = await axios_default().post(requestUrl, form, {
-                headers: {
-                    'User-Agent': 'https://github.com/JamieMagee/wayback',
-                    ...form.getHeaders(),
-                },
-            });
-            const match = WayBack.statusGuidRegex.exec(res.data);
-            if (match && ((_a = match.groups) === null || _a === void 0 ? void 0 : _a.guid)) {
-                const guid = (_b = match.groups) === null || _b === void 0 ? void 0 : _b.guid;
-                const saveStatus = await this.pollStatus(guid);
-                this.handleStatusResponse(saveStatus);
-            }
-            else {
-                logger.error('Unable to fetch status');
-                throw new Error();
-            }
-        }
-        catch (err) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            this.handleErrorResponse(err.response);
-            logger.error(err.message);
-            throw err;
-        }
-    }
-    handleErrorResponse(response) {
-        var _a;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const error = (_a = response === null || response === void 0 ? void 0 : response.headers) === null || _a === void 0 ? void 0 : _a['x-archive-wayback-runtime-error'];
-        if (error) {
-            switch (error) {
-                case 'AdministrativeAccessControlException':
-                    logger.error('This site is excluded from the Wayback Machine.');
-                    break;
-                case 'RobotAccessControlException':
-                    logger.error('Blocked by robots.txt.');
-                    break;
-                case 'LiveDocumentNotAvailableException':
-                case 'LiveWebCacheUnavailableException':
-                    logger.error('Unable to archive page. Try again later.');
-                    break;
-                default:
-                    logger.error('An unknown error occurred.', error);
-            }
-        }
-    }
-    handleStatusResponse(saveStatus) {
-        switch (saveStatus.status) {
-            case 'success':
-                logger.info(this.getArchiveUrl(saveStatus));
-                break;
-            default:
-                logger.debug(saveStatus);
-        }
-    }
-    async pollStatus(guid) {
-        let saveStatus = await this.getSaveStatus(guid);
-        while (saveStatus.status === 'pending') {
-            await this.sleep(2000);
-            saveStatus = await this.getSaveStatus(guid);
-        }
-        return saveStatus;
-    }
-    async getSaveStatus(guid) {
-        try {
-            return (await axios_default().get(`${WayBack.baseWaybackUrl}/status/${guid}`)).data;
-        }
-        catch (err) {
-            logger.error(err.message);
-            throw err;
-        }
-    }
-    async sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-    getArchiveUrl(saveStatus) {
-        // original_url is present when status === 'success'
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
-        core.setOutput('wayback_url', archiveUrl);
-        return archiveUrl;
-    }
-}
-WayBack.baseWaybackUrl = 'https://web.archive.org/save';
-WayBack.statusGuidRegex = /watchJob\("(?<guid>[0-9nps]{4}-[0-9a-f]{40}-[0-9a-f]{8})/;
-
-;// CONCATENATED MODULE: ./runner.ts
-
-
-
-async function run() {
-    try {
-        const input = new Input();
-        const wayback = new WayBack(input);
-        await wayback.save();
-    }
-    catch (error) {
-        (0,core.setFailed)(error.message);
-    }
-}
-
-;// CONCATENATED MODULE: ./index.ts
-
-run().catch(console.error);
-
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(8746);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
