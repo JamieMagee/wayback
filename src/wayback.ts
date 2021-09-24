@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import Input from './input';
 import { SaveStatus } from './types';
@@ -53,7 +53,7 @@ export default class WayBack {
       }
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.handleErrorResponse(err.response as AxiosResponse);
+      this.handleErrorResponse((err as AxiosError).response as AxiosResponse);
       log.error((err as Error).message);
       throw err;
     }
