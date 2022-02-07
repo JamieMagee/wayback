@@ -36,7 +36,7 @@ export default class WayBack {
     }
 
     try {
-      const res = await axios.post(requestUrl, form, {
+      const res = await axios.post<string>(requestUrl, form, {
         headers: {
           'User-Agent': 'https://github.com/JamieMagee/wayback',
           ...form.getHeaders(),
