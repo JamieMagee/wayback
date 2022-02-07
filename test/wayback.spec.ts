@@ -73,6 +73,13 @@ describe(getName(__filename), () => {
     expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 
+  it('throws on empty response', async () => {
+    waybackScope.post(`/${testDomain}`).reply(200, '');
+    const wayback = new WayBack(input);
+    await expect(wayback.save()).rejects.toThrow();
+    expect(core.setOutput).toHaveBeenCalledTimes(0);
+  });
+
   it.each([
     ['AdministrativeAccessControlException'],
     ['RobotAccessControlException'],
