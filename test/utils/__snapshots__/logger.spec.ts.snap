@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`works 1`] = `
+exports[` works 1`] = `
 Array [
   Array [
     "[[34mDEBUG[39m] test",
