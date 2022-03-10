@@ -1932,7 +1932,7 @@ var zlib = __nccwpck_require__(9796);
 var VERSION = (__nccwpck_require__(9413).version);
 var createError = __nccwpck_require__(1987);
 var enhanceError = __nccwpck_require__(8575);
-var defaults = __nccwpck_require__(9410);
+var transitionalDefaults = __nccwpck_require__(6511);
 var Cancel = __nccwpck_require__(3910);
 
 var isHttps = /https:?/;
@@ -2284,7 +2284,7 @@ module.exports = function httpAdapter(config) {
         } else {
           timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
         }
-        var transitional = config.transitional || defaults.transitional;
+        var transitional = config.transitional || transitionalDefaults;
         reject(createError(
           timeoutErrorMessage,
           config,
@@ -2339,7 +2339,7 @@ var buildFullPath = __nccwpck_require__(7124);
 var parseHeaders = __nccwpck_require__(3159);
 var isURLSameOrigin = __nccwpck_require__(7446);
 var createError = __nccwpck_require__(1987);
-var defaults = __nccwpck_require__(9410);
+var transitionalDefaults = __nccwpck_require__(6511);
 var Cancel = __nccwpck_require__(3910);
 
 module.exports = function xhrAdapter(config) {
@@ -2454,7 +2454,7 @@ module.exports = function xhrAdapter(config) {
     // Handle timeout
     request.ontimeout = function handleTimeout() {
       var timeoutErrorMessage = config.timeout ? 'timeout of ' + config.timeout + 'ms exceeded' : 'timeout exceeded';
-      var transitional = config.transitional || defaults.transitional;
+      var transitional = config.transitional || transitionalDefaults;
       if (config.timeoutErrorMessage) {
         timeoutErrorMessage = config.timeoutErrorMessage;
       }
@@ -2555,7 +2555,7 @@ var utils = __nccwpck_require__(1338);
 var bind = __nccwpck_require__(5228);
 var Axios = __nccwpck_require__(9784);
 var mergeConfig = __nccwpck_require__(3897);
-var defaults = __nccwpck_require__(9410);
+var defaults = __nccwpck_require__(453);
 
 /**
  * Create an instance of Axios
@@ -3058,7 +3058,7 @@ module.exports = function createError(message, config, code, request, response) 
 var utils = __nccwpck_require__(1338);
 var transformData = __nccwpck_require__(7517);
 var isCancel = __nccwpck_require__(6283);
-var defaults = __nccwpck_require__(9410);
+var defaults = __nccwpck_require__(453);
 var Cancel = __nccwpck_require__(3910);
 
 /**
@@ -3342,7 +3342,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 var utils = __nccwpck_require__(1338);
-var defaults = __nccwpck_require__(9410);
+var defaults = __nccwpck_require__(453);
 
 /**
  * Transform the data for a request or a response
@@ -3365,7 +3365,7 @@ module.exports = function transformData(data, headers, fns) {
 
 /***/ }),
 
-/***/ 9410:
+/***/ 453:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -3374,6 +3374,7 @@ module.exports = function transformData(data, headers, fns) {
 var utils = __nccwpck_require__(1338);
 var normalizeHeaderName = __nccwpck_require__(10);
 var enhanceError = __nccwpck_require__(8575);
+var transitionalDefaults = __nccwpck_require__(6511);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -3414,11 +3415,7 @@ function stringifySafely(rawValue, parser, encoder) {
 
 var defaults = {
 
-  transitional: {
-    silentJSONParsing: true,
-    forcedJSONParsing: true,
-    clarifyTimeoutError: false
-  },
+  transitional: transitionalDefaults,
 
   adapter: getDefaultAdapter(),
 
@@ -3507,11 +3504,26 @@ module.exports = defaults;
 
 /***/ }),
 
+/***/ 6511:
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = {
+  silentJSONParsing: true,
+  forcedJSONParsing: true,
+  clarifyTimeoutError: false
+};
+
+
+/***/ }),
+
 /***/ 9413:
 /***/ ((module) => {
 
 module.exports = {
-  "version": "0.26.0"
+  "version": "0.26.1"
 };
 
 /***/ }),
@@ -9158,7 +9170,11 @@ const runner_1 = __importDefault(__nccwpck_require__(5857));
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -9284,7 +9300,11 @@ exports["default"] = log;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
