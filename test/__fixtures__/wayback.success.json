@@ -1,9 +1,9 @@
 {
-  "job_id": "spn2-b559c7edd3fb67374c1a25e739cdd7edd1d79949-826ebe1b",
+  "job_id": "spn2-b559c7edd3fb67374c1a25e739cdd7edd1d79949",
   "resources": [],
   "outlinks": [],
-  "timestamp": "20210610153123",
+  "timestamp": "20220328013741",
   "original_url": "https://example.com/",
   "status": "success",
-  "duration_sec": 11.582
+  "duration_sec": 4.121
 }
