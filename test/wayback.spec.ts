@@ -6,10 +6,10 @@ import WayBack from '../src/wayback';
 import { getName } from './utils';
 
 jest.mock('../src/input');
-const testGuid = 'spn2-b559c7edd3fb67374c1a25e739cdd7edd1d79949-826ebe1b';
+const testGuid = 'spn2-b559c7edd3fb67374c1a25e739cdd7edd1d79949';
 const testDomain = 'example.com';
 const testOutput =
-  'https://web.archive.org/web/20210610153123/https://example.com/';
+  'https://web.archive.org/web/20220328013741/https://example.com/';
 const htmlResponse = fs.readFileSync('test/__fixtures__/save.html');
 const pendingJson = fs.readFileSync('test/__fixtures__/wayback.pending.json');
 const successJson = fs.readFileSync('test/__fixtures__/wayback.success.json');
