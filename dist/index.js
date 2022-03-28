@@ -9433,7 +9433,7 @@ class WayBack {
 }
 exports["default"] = WayBack;
 WayBack.baseWaybackUrl = 'https://web.archive.org/save';
-WayBack.statusGuidRegex = /watchJob\("(?<guid>[0-9nps]{4}-[0-9a-f]{40}-[0-9a-f]{8})/;
+WayBack.statusGuidRegex = /watchJob\("(?<guid>[0-9nps]{4}-[0-9a-f]{40})/;
 
 
 /***/ }),
