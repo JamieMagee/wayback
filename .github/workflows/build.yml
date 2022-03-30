@@ -100,7 +100,7 @@ jobs:
       - run: yarn jest --maxWorkers=2 --ci --coverage
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3.0.0
         if: always()
         with:
           name: coverage
