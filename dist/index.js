@@ -2227,6 +2227,8 @@ var CanceledError = __nccwpck_require__(6619);
 
 var isHttps = /https:?/;
 
+var supportedProtocols = [ 'http:', 'https:', 'file:' ];
+
 /**
  *
  * @param {http.ClientRequestArgs} options
@@ -2339,9 +2341,9 @@ module.exports = function httpAdapter(config) {
     // Parse url
     var fullPath = buildFullPath(config.baseURL, config.url);
     var parsed = url.parse(fullPath);
-    var protocol = utils.getProtocol(parsed.protocol);
+    var protocol = parsed.protocol || supportedProtocols[0];
 
-    if (!utils.supportedProtocols.includes(protocol)) {
+    if (supportedProtocols.indexOf(protocol) === -1) {
       return reject(new AxiosError(
         'Unsupported protocol ' + protocol,
         AxiosError.ERR_BAD_REQUEST,
@@ -2647,7 +2649,6 @@ var buildURL = __nccwpck_require__(6569);
 var buildFullPath = __nccwpck_require__(7124);
 var parseHeaders = __nccwpck_require__(3159);
 var isURLSameOrigin = __nccwpck_require__(7446);
-var url = __nccwpck_require__(7310);
 var transitionalDefaults = __nccwpck_require__(6511);
 var AxiosError = __nccwpck_require__(9206);
 var CanceledError = __nccwpck_require__(6619);
@@ -2678,8 +2679,6 @@ module.exports = function xhrAdapter(config) {
     }
 
     var fullPath = buildFullPath(config.baseURL, config.url);
-    var parsed = url.parse(fullPath);
-    var protocol = utils.getProtocol(parsed.protocol);
 
     request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
 
@@ -2846,15 +2845,14 @@ module.exports = function xhrAdapter(config) {
       requestData = null;
     }
 
-    if (parsed.path === null) {
-      reject(new AxiosError('Malformed URL ' + fullPath, AxiosError.ERR_BAD_REQUEST, config));
+    var tokens = fullPath.split(':', 2);
+    var protocol = tokens.length > 1 && tokens[0];
+
+    if (protocol && [ 'http', 'https', 'file' ].indexOf(protocol) === -1) {
+      reject(new AxiosError('Unsupported protocol ' + protocol + ':', AxiosError.ERR_BAD_REQUEST, config));
       return;
     }
 
-    if (!utils.supportedProtocols.includes(protocol)) {
-      reject(new AxiosError('Unsupported protocol ' + protocol, AxiosError.ERR_BAD_REQUEST, config));
-      return;
-    }
 
     // Send the request
     request.send(requestData);
@@ -3906,7 +3904,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  "version": "0.27.0"
+  "version": "0.27.1"
 };
 
 /***/ }),
@@ -4529,22 +4527,6 @@ function kindOfTest(type) {
 }
 
 /**
- * Array with axios supported protocols.
- */
-var supportedProtocols = [ 'http:', 'https:', 'file:' ];
-
-/**
- * Returns URL protocol passed as param if is not undefined or null,
- * otherwise just returns 'http:'
- *
- * @param {String} protocol The String value of URL protocol
- * @returns {String} Protocol if the value is not undefined or null
- */
-function getProtocol(protocol) {
-  return protocol || 'http:';
-}
-
-/**
  * Determine if a value is an Array
  *
  * @param {Object} val The value to test
@@ -4959,8 +4941,6 @@ var isTypedArray = (function(TypedArray) {
 })(typeof Uint8Array !== 'undefined' && Object.getPrototypeOf(Uint8Array));
 
 module.exports = {
-  supportedProtocols: supportedProtocols,
-  getProtocol: getProtocol,
   isArray: isArray,
   isArrayBuffer: isArrayBuffer,
   isBuffer: isBuffer,
