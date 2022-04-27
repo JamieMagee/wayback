@@ -2652,6 +2652,7 @@ var isURLSameOrigin = __nccwpck_require__(7446);
 var transitionalDefaults = __nccwpck_require__(6511);
 var AxiosError = __nccwpck_require__(9206);
 var CanceledError = __nccwpck_require__(6619);
+var parseProtocol = __nccwpck_require__(5200);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -2667,6 +2668,10 @@ module.exports = function xhrAdapter(config) {
       if (config.signal) {
         config.signal.removeEventListener('abort', onCanceled);
       }
+    }
+
+    if (utils.isFormData(requestData) && utils.isStandardBrowserEnv()) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
     }
 
     var request = new XMLHttpRequest();
@@ -2845,8 +2850,7 @@ module.exports = function xhrAdapter(config) {
       requestData = null;
     }
 
-    var tokens = fullPath.split(':', 2);
-    var protocol = tokens.length > 1 && tokens[0];
+    var protocol = parseProtocol(fullPath);
 
     if (protocol && [ 'http', 'https', 'file' ].indexOf(protocol) === -1) {
       reject(new AxiosError('Unsupported protocol ' + protocol + ':', AxiosError.ERR_BAD_REQUEST, config));
@@ -3904,7 +3908,7 @@ module.exports = {
 /***/ ((module) => {
 
 module.exports = {
-  "version": "0.27.1"
+  "version": "0.27.2"
 };
 
 /***/ }),
@@ -4284,6 +4288,20 @@ module.exports = function parseHeaders(headers) {
   });
 
   return parsed;
+};
+
+
+/***/ }),
+
+/***/ 5200:
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = function parseProtocol(url) {
+  var match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
+  return match && match[1] || '';
 };
 
 
