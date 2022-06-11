@@ -38,7 +38,7 @@
     "@semantic-release/git": "10.0.1",
     "@semantic-release/github": "8.0.4",
     "@semantic-release/npm": "9.0.1",
-    "@tsconfig/node16": "1.0.2",
+    "@tsconfig/node16": "1.0.3",
     "@types/jest": "27.5.2",
     "@types/node": "16.11.39",
     "@types/semver": "7.3.9",
