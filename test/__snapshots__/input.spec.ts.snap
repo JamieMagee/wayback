@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[` works 1`] = `
+exports[`undefined works 1`] = `
 Array [
   Array [
     "url",
@@ -20,7 +20,7 @@ Array [
 ]
 `;
 
-exports[` works 2`] = `
+exports[`undefined works 2`] = `
 Input {
   "saveErrors": true,
   "saveOutlinks": false,
