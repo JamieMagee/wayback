@@ -22,11 +22,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # tag=v3.0.4
         with:
           path: ${{ env.YARN_CACHE_FOLDER }}
           key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
@@ -34,7 +34,7 @@ jobs:
             ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
 
       - name: Cache node_modules
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # tag=v3.0.4
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3.3.0
+        uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd # tag=v3.3.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -72,11 +72,11 @@ jobs:
           echo "Node $(node --version)"
           echo "Yarn $(yarn --version)"
 
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # tag=v3.0.4
         with:
           path: ${{ env.YARN_CACHE_FOLDER }}
           key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
@@ -84,7 +84,7 @@ jobs:
             ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
 
       - name: Cache node_modules
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # tag=v3.0.4
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -100,14 +100,14 @@ jobs:
       - run: yarn jest --maxWorkers=2 --ci --coverage
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3.1.0
         if: always()
         with:
           name: coverage
           path: coverage
 
       - name: Codecov
-        uses: codecov/codecov-action@v3.1.0
+        uses: codecov/codecov-action@81cd2dc8148241f03f5839d295e000b8f761e378 # tag=v3.1.0
 
   release:
     needs: [test]
@@ -115,7 +115,7 @@ jobs:
 
     steps:
       - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3.3.0
+        uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd # tag=v3.3.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -129,7 +129,7 @@ jobs:
           git config --global user.name  'Jamie Magee'
           yarn config set version-git-tag false
 
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3.0.2
         with:
           fetch-depth: 0
           ref: 'release'
@@ -148,7 +148,7 @@ jobs:
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # tag=v3.0.4
         with:
           path: ${{ env.YARN_CACHE_FOLDER }}
           key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
@@ -156,7 +156,7 @@ jobs:
             ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
 
       - name: Cache node_modules
-        uses: actions/cache@v3.0.4
+        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # tag=v3.0.4
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
