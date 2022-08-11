@@ -26,7 +26,7 @@ jobs:
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
-        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # tag=v3.0.6
+        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19 # tag=v3.0.7
         with:
           path: ${{ env.YARN_CACHE_FOLDER }}
           key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
@@ -34,7 +34,7 @@ jobs:
             ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
 
       - name: Cache node_modules
-        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # tag=v3.0.6
+        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19 # tag=v3.0.7
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -76,7 +76,7 @@ jobs:
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
-        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # tag=v3.0.6
+        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19 # tag=v3.0.7
         with:
           path: ${{ env.YARN_CACHE_FOLDER }}
           key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
@@ -84,7 +84,7 @@ jobs:
             ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
 
       - name: Cache node_modules
-        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # tag=v3.0.6
+        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19 # tag=v3.0.7
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -148,7 +148,7 @@ jobs:
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
-        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # tag=v3.0.6
+        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19 # tag=v3.0.7
         with:
           path: ${{ env.YARN_CACHE_FOLDER }}
           key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
@@ -156,7 +156,7 @@ jobs:
             ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
 
       - name: Cache node_modules
-        uses: actions/cache@f4278025ab0f432ce369118909e46deec636f50c # tag=v3.0.6
+        uses: actions/cache@a7c34adf76222e77931dedbf4a45b2e4648ced19 # tag=v3.0.7
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
