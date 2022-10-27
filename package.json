@@ -41,7 +41,7 @@
     "@tsconfig/node16": "1.0.3",
     "@types/jest": "28.1.8",
     "@types/node": "16.18.2",
-    "@types/semver": "7.3.12",
+    "@types/semver": "7.3.13",
     "@typescript-eslint/eslint-plugin": "5.41.0",
     "@typescript-eslint/parser": "5.41.0",
     "@vercel/ncc": "0.34.0",
