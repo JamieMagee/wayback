@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`undefined works 1`] = `
-Array [
-  Array [
+[
+  [
     "url",
-    Object {
+    {
       "required": true,
     },
   ],
-  Array [
+  [
     "saveErrors",
   ],
-  Array [
+  [
     "saveOutlinks",
   ],
-  Array [
+  [
     "saveScreenshot",
   ],
 ]
