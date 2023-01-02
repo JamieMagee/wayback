@@ -61,7 +61,7 @@ export default class WayBack {
 
   private handleErrorResponse(response: AxiosResponse): void {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const error: string = // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const error: string | undefined = // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       response?.headers?.['x-archive-wayback-runtime-error'];
     if (error) {
       switch (error) {
