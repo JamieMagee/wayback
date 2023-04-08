@@ -3,7 +3,7 @@
 Save pages to the [Wayback Machine](https://web.archive.org/) as part of your CI/CD pipeline. If you find this useful, please [donate to the Internet Archive](https://archive.org/donate/).
 
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-wayback--machine-green?style=for-the-badge&logo=github)](https://github.com/marketplace/actions/wayback-machine)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/JamieMagee/wayback/build?style=for-the-badge)](https://github.com/JamieMagee/wayback/actions?query=workflow%3Abuild)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/JamieMagee/wayback/build.yml?branch=main&style=for-the-badge)](https://github.com/JamieMagee/wayback/actions?query=workflow%3Abuild)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/JamieMagee/wayback?style=for-the-badge)](https://github.com/JamieMagee/wayback/releases/latest)
 [![License](https://img.shields.io/github/license/JamieMagee/wayback?style=for-the-badge)](https://github.com/JamieMagee/wayback/blob/main/LICENSE)
 
