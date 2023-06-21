@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
@@ -72,7 +72,7 @@ jobs:
           echo "Node $(node --version)"
           echo "Yarn $(yarn --version)"
 
-      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
       - name: Cache Yarn packages
         id: yarn_cache_packages
@@ -107,7 +107,7 @@ jobs:
           path: coverage
 
       - name: Codecov
-        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # tag=v3.1.1
+        uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
 
   release:
     needs: [test]
@@ -129,7 +129,7 @@ jobs:
           git config --global user.name  'Jamie Magee'
           yarn config set version-git-tag false
 
-      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3.5.0
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
         with:
           fetch-depth: 0
           ref: 'release'
