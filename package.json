@@ -39,7 +39,7 @@
     "@semantic-release/github": "8.1.0",
     "@semantic-release/npm": "9.0.2",
     "@tsconfig/node16": "1.0.4",
-    "@types/jest": "29.5.3",
+    "@types/jest": "29.5.4",
     "@types/node": "16.18.42",
     "@types/semver": "7.5.0",
     "@typescript-eslint/eslint-plugin": "5.62.0",
