@@ -10,7 +10,7 @@ on:
 
 env:
   VERSION: v0
-  NODE_VERSION: 16
+  NODE_VERSION: 20
   YARN_CACHE_KEY: v0
   YARN_CACHE_FOLDER: .cache/yarn
   # https://github.com/chalk/supports-color/issues/106
