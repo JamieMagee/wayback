@@ -1,16 +1,10 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
 name: 'CodeQL'
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [master]
+    branches: [main]
   schedule:
     - cron: '0 20 * * 3'
 
@@ -24,16 +18,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@4a8f20f6b9b5114f354129a1e2f391d75bfd640a # v2
+        uses: github/codeql-action/init@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
 
-      # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-      # If this step fails, then you should remove it and run the build manually (see below)
       - name: Autobuild
-        uses: github/codeql-action/autobuild@4a8f20f6b9b5114f354129a1e2f391d75bfd640a # v2
+        uses: github/codeql-action/autobuild@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@4a8f20f6b9b5114f354129a1e2f391d75bfd640a # v2
+        uses: github/codeql-action/analyze@379614612a29c9e28f31f39a59013eb8012a51f0 # v3.24.3
