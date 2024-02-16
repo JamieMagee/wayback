@@ -25,4 +25,4 @@ outputs:
     description: 'The Wayback Machine URL'
 runs:
   using: 'node20'
-  main: 'dist/index.js'
+  main: 'dist/index.cjs'
