@@ -12,8 +12,7 @@
     ".": "./dist/index.cjs"
   },
   "scripts": {
-    "clean": "rm -rf dist",
-    "compile": "pkgroll --minify",
+    "build": "pkgroll --minify",
     "lint": "biome check ./src",
     "release": "semantic-release",
     "start": "tsx"
