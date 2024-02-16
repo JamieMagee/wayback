@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-    needs: prepare
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +33,7 @@ jobs:
       - run: pnpm jest --maxWorkers=2 --ci --coverage
 
   release:
-    needs: [test]
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
