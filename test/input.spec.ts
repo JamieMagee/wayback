@@ -9,14 +9,28 @@ describe(getName(__filename), () => {
     jest.clearAllMocks();
   });
 
-  it('works', () => {
+  it('works for multiple urls', () => {
+    core.getMultilineInput.mockReturnValue(['example.com', 'example.com']);
     core.getInput
-      .mockReturnValueOnce('example.com')
       .mockReturnValueOnce('true')
       .mockReturnValueOnce('false')
       .mockReturnValueOnce('true');
     const input = new Input();
 
+    expect(core.getMultilineInput.mock.calls).toMatchSnapshot();
+    expect(core.getInput.mock.calls).toMatchSnapshot();
+    expect(input).toMatchSnapshot();
+  });
+
+  it('works for a single url', () => {
+    core.getMultilineInput.mockReturnValue(['example.com']);
+    core.getInput
+      .mockReturnValueOnce('true')
+      .mockReturnValueOnce('false')
+      .mockReturnValueOnce('true');
+    const input = new Input();
+
+    expect(core.getMultilineInput.mock.calls).toMatchSnapshot();
     expect(core.getInput.mock.calls).toMatchSnapshot();
     expect(input).toMatchSnapshot();
   });

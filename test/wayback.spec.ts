@@ -34,7 +34,7 @@ describe(getName(__filename), () => {
       .get(`/status/${testGuid}`)
       .reply(200, successJson);
     const wayback = new WayBack(input);
-    await wayback.save();
+    await wayback.save(testDomain);
     expect(core.setOutput).toHaveBeenCalledTimes(1);
     expect(core.setOutput).toHaveBeenCalledWith('wayback_url', testOutput);
     expect(nock.isDone()).toBe(true);
@@ -49,7 +49,7 @@ describe(getName(__filename), () => {
       .get(`/status/${testGuid}`)
       .reply(200, successJson);
     const wayback = new WayBack(input);
-    await wayback.save();
+    await wayback.save(testDomain);
     expect(core.setOutput).toHaveBeenCalledTimes(1);
     expect(core.setOutput).toHaveBeenCalledWith('wayback_url', testOutput);
     expect(nock.isDone()).toBe(true);
@@ -58,7 +58,7 @@ describe(getName(__filename), () => {
   it('submit to throw', async () => {
     waybackScope.post(`/${testDomain}`).reply(500);
     const wayback = new WayBack(input);
-    await expect(wayback.save()).rejects.toThrow();
+    await expect(wayback.save(testDomain)).rejects.toThrow();
     expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 
@@ -69,14 +69,14 @@ describe(getName(__filename), () => {
       .get(`/status/${testGuid}`)
       .reply(404);
     const wayback = new WayBack(input);
-    await expect(wayback.save()).rejects.toThrow();
+    await expect(wayback.save(testDomain)).rejects.toThrow();
     expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 
   it('throws on empty response', async () => {
     waybackScope.post(`/${testDomain}`).reply(200, '');
     const wayback = new WayBack(input);
-    await expect(wayback.save()).rejects.toThrow();
+    await expect(wayback.save(testDomain)).rejects.toThrow();
     expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 
@@ -91,7 +91,7 @@ describe(getName(__filename), () => {
       'x-archive-wayback-runtime-error': header,
     });
     const wayback = new WayBack(input);
-    await expect(wayback.save()).rejects.toThrow();
+    await expect(wayback.save(testDomain)).rejects.toThrow();
     expect(core.setOutput).toHaveBeenCalledTimes(0);
   });
 });

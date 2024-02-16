@@ -6,6 +6,6 @@
   "compilerOptions": {
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "noEmit": true
+    "sourceMap": true
   }
 }

@@ -1,30 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`undefined works 1`] = `
+exports[`undefined works for a single url 1`] = `
 [
   [
     "url",
     {
       "required": true,
+      "trimWhitespace": true,
     },
-  ],
-  [
-    "saveErrors",
-  ],
-  [
-    "saveOutlinks",
-  ],
-  [
-    "saveScreenshot",
   ],
 ]
 `;
 
-exports[`undefined works 2`] = `
+exports[`undefined works for a single url 2`] = `
+[
+  [
+    "saveErrors",
+    {
+      "trimWhitespace": true,
+    },
+  ],
+  [
+    "saveOutlinks",
+    {
+      "trimWhitespace": true,
+    },
+  ],
+  [
+    "saveScreenshot",
+    {
+      "trimWhitespace": true,
+    },
+  ],
+]
+`;
+
+exports[`undefined works for a single url 3`] = `
 Input {
   "saveErrors": true,
   "saveOutlinks": false,
   "saveScreenshot": true,
-  "url": "example.com",
+  "url": [
+    "example.com",
+  ],
+}
+`;
+
+exports[`undefined works for multiple urls 1`] = `
+[
+  [
+    "url",
+    {
+      "required": true,
+      "trimWhitespace": true,
+    },
+  ],
+]
+`;
+
+exports[`undefined works for multiple urls 2`] = `
+[
+  [
+    "saveErrors",
+    {
+      "trimWhitespace": true,
+    },
+  ],
+  [
+    "saveOutlinks",
+    {
+      "trimWhitespace": true,
+    },
+  ],
+  [
+    "saveScreenshot",
+    {
+      "trimWhitespace": true,
+    },
+  ],
+]
+`;
+
+exports[`undefined works for multiple urls 3`] = `
+Input {
+  "saveErrors": true,
+  "saveOutlinks": false,
+  "saveScreenshot": true,
+  "url": [
+    "example.com",
+    "example.com",
+  ],
 }
 `;

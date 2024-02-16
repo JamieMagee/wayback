@@ -9,22 +9,20 @@ export default class WayBack {
   private static readonly baseWaybackUrl = 'https://web.archive.org/save';
   private static readonly statusGuidRegex =
     /watchJob\("(?<guid>[0-9nps]{4}-[0-9a-f]{40})/;
-  private url: string;
   private saveErrors: boolean;
   private saveOutlinks: boolean;
   private saveScreenshot: boolean;
 
   constructor(input: Input) {
-    this.url = input.url;
     this.saveErrors = input.saveErrors;
     this.saveOutlinks = input.saveOutlinks;
     this.saveScreenshot = input.saveScreenshot;
   }
 
-  public async save(): Promise<void> {
-    const requestUrl = `${WayBack.baseWaybackUrl}/${this.url}`;
+  public async save(url: string): Promise<void> {
+    const requestUrl = `${WayBack.baseWaybackUrl}/${url}`;
     const form = new FormData();
-    form.append('url', this.url);
+    form.append('url', url);
     if (this.saveErrors) {
       form.append('capture_all', 'on');
     }
