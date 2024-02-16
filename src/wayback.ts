@@ -52,7 +52,6 @@ export default class WayBack {
         throw new Error();
       }
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       this.handleErrorResponse((err as AxiosError).response as AxiosResponse);
       log.error((err as Error).message);
       throw err;
@@ -60,8 +59,7 @@ export default class WayBack {
   }
 
   private handleErrorResponse(response: AxiosResponse): void {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const error: string | undefined = // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const error: string | undefined =
       response?.headers?.['x-archive-wayback-runtime-error'];
     if (error) {
       switch (error) {
@@ -117,7 +115,6 @@ export default class WayBack {
 
   private getArchiveUrl(saveStatus: SaveStatus): string | undefined {
     // original_url is present when status === 'success'
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
     core.setOutput('wayback_url', archiveUrl);
     return archiveUrl;
