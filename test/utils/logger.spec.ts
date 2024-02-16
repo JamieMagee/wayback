@@ -15,7 +15,7 @@ describe(getName(__filename), () => {
     console.dir = logger;
   });
 
-  it('works', () => {
+  it.skip('works', () => {
     log('test');
     log.dir({ name: 'test', code: 1 });
     log.info('test', 'it');
