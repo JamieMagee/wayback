@@ -43,8 +43,8 @@ export default class WayBack {
         },
       });
       const match = WayBack.statusGuidRegex.exec(res.data);
-      if (match?.groups?.guid) {
-        const guid = match.groups?.guid;
+      if (match?.groups?.['guid']) {
+        const guid = match.groups?.['guid'];
         const saveStatus = await this.pollStatus(guid);
         this.handleStatusResponse(saveStatus);
       } else {

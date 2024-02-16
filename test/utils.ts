@@ -14,7 +14,7 @@ export function partial<T>(obj?: Partial<T>): T {
   return (obj ?? {}) as T;
 }
 
-export function getName(file: string): string {
+export function getName(file: string): string | undefined {
   const [, name] = /lib\/(.*?)\.spec\.ts$/.exec(file.replace(/\\/g, '/')) ?? [];
   return name;
 }

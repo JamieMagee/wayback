@@ -26,7 +26,8 @@
     "@semantic-release/git": "10.0.1",
     "@semantic-release/github": "8.1.0",
     "@semantic-release/npm": "9.0.2",
-    "@tsconfig/node16": "1.0.4",
+    "@tsconfig/node20": "20.1.2",
+    "@tsconfig/strictest": "2.0.3",
     "@types/jest": "29.5.12",
     "@types/node": "16.18.82",
     "axios": "1.6.7",
@@ -41,6 +42,6 @@
     "strip-ansi": "6.0.1",
     "ts-jest": "29.1.2",
     "tsx": "4.7.1",
-    "typescript": "5.1.6"
+    "typescript": "5.3.3"
   }
 }

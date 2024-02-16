@@ -1,4 +1,4 @@
-const ci = !!process.env.CI;
+const ci = !!process.env["CI"];
 
 module.exports = {
   preset: 'ts-jest',
