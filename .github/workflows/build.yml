@@ -8,116 +8,44 @@ on:
 
   pull_request:
 
-env:
-  VERSION: v0
-  NODE_VERSION: 16
-  YARN_CACHE_KEY: v0
-  YARN_CACHE_FOLDER: .cache/yarn
-  # https://github.com/chalk/supports-color/issues/106
-  FORCE_COLOR: true
-
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
-
-      - name: Cache Yarn packages
-        id: yarn_cache_packages
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
-        with:
-          path: ${{ env.YARN_CACHE_FOLDER }}
-          key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
-
-      - name: Cache node_modules
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-yarn-
-
-      # Clear caches on cache miss, otherwise they will grow indefinitely
-      - name: Clear yarn cache
-        if: steps.yarn_cache_packages.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
-        run: yarn cache clean
-
-      - run: yarn install --frozen-lockfile
-
-  test:
+  build:
     needs: prepare
     runs-on: ubuntu-latest
 
-    # tests shouldn't need more than 15 min
-    timeout-minutes: 15
-
     steps:
-      - name: Set up Node.js ${{ env.NODE_VERSION }}
+      - name: Set up Node.js
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: latest
 
-      - name: Init platform
-        id: init
-        shell: bash
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.symlinks true
-          git config --global user.email 'jamie.magee@gmail.com'
-          git config --global user.name  'Jamie Magee'
-          echo "Node $(node --version)"
-          echo "Yarn $(yarn --version)"
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
 
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
-      - name: Cache Yarn packages
-        id: yarn_cache_packages
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
-        with:
-          path: ${{ env.YARN_CACHE_FOLDER }}
-          key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
+      - run: pnpm install
 
-      - name: Cache node_modules
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-
+      - run: pnpm lint
 
-      - run: yarn install --frozen-lockfile
+      - run: pnpm compile
 
-      - run: yarn lint
-
-      - run: yarn compile
-
-      - run: yarn jest --maxWorkers=2 --ci --coverage
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
-        if: always()
-        with:
-          name: coverage
-          path: coverage
-
-      - name: Codecov
-        uses: codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457 # v3.1.6
+      - run: pnpm jest --maxWorkers=2 --ci --coverage
 
   release:
     needs: [test]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Node.js ${{ env.NODE_VERSION }}
+      - name: Set up Node.js
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: latest
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
 
       - name: Init platform
         id: init
@@ -127,7 +55,6 @@ jobs:
           git config --global core.symlinks true
           git config --global user.email 'jamie.magee@gmail.com'
           git config --global user.name  'Jamie Magee'
-          yarn config set version-git-tag false
 
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
@@ -146,24 +73,7 @@ jobs:
           commit=$(git rev-parse HEAD)
           echo "::set-output name=commit::${commit}"
 
-      - name: Cache Yarn packages
-        id: yarn_cache_packages
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
-        with:
-          path: ${{ env.YARN_CACHE_FOLDER }}
-          key: ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ env.YARN_CACHE_KEY }}-${{ runner.os }}-yarn_cache-
-
-      - name: Cache node_modules
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.NODE_VERSION }}-yarn-
-
-      - run: yarn install --frozen-lockfile
+      - run: pnpm install
 
       - name: Push release branch
         run: git push origin release:release
@@ -173,7 +83,7 @@ jobs:
         run: |
           # override for semantic-release
           export GITHUB_REF=refs/heads/release GITHUB_SHA=${{ steps.merge.outputs.commit }}
-          yarn release
+          pnpm release
         if: ${{github.ref == 'refs/heads/main'}}
         env:
           GITHUB_TOKEN: ${{ github.token }}
