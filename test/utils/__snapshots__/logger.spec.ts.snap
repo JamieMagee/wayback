@@ -12,13 +12,13 @@ exports[`undefined works 1`] = `
     },
   ],
   [
-    "[[32mINFO[39m] [90mtest[39m it",
+    "[[32mINFO[39m] test it",
   ],
   [
-    "[[35mWARN[39m] [33mtest[39m it",
+    "[[33mWARN[39m] test it",
   ],
   [
-    "[[31mERROR[39m] [31mtest[39m",
+    "[[31mERROR[39m] test",
   ],
 ]
 `;
