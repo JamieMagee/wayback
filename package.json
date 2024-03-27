@@ -24,7 +24,7 @@
     "@semantic-release/git": "10.0.1",
     "@semantic-release/github": "9.2.6",
     "@semantic-release/npm": "11.0.2",
-    "@tsconfig/node20": "20.1.2",
+    "@tsconfig/node20": "20.1.4",
     "@tsconfig/strictest": "2.0.3",
     "@types/jest": "29.5.12",
     "@types/node": "20.11.19",
