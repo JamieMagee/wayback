@@ -51,8 +51,8 @@ devDependencies:
     specifier: 29.7.0
     version: 29.7.0(@types/node@20.11.19)
   nock:
-    specifier: 13.5.1
-    version: 13.5.1
+    specifier: 13.5.5
+    version: 13.5.5
   pkgroll:
     specifier: 2.0.1
     version: 2.0.1(typescript@5.3.3)
@@ -3676,8 +3676,8 @@ packages:
     resolution: {integrity: sha512-EZSPZB70jiVsivaBLYDCyntd5eH8NTSMOn3rB+HxwdmKThGELLdYv8qVIMWvZEFy9w8ZZpW9h9OB32l1rGtj7g==}
     dev: true
 
-  /nock@13.5.1:
-    resolution: {integrity: sha512-+s7b73fzj5KnxbKH4Oaqz07tQ8degcMilU4rrmnKvI//b0JMBU4wEXFQ8zqr+3+L4eWSfU3H/UoIVGUV0tue1Q==}
+  /nock@13.5.5:
+    resolution: {integrity: sha512-XKYnqUrCwXC8DGG1xX4YH5yNIrlh9c065uaMZZHUoeUUINTOyt+x/G+ezYk0Ft6ExSREVIs+qBJDK503viTfFA==}
     engines: {node: '>= 10.13'}
     dependencies:
       debug: 4.3.4
