@@ -53,7 +53,7 @@ jobs:
         id: current_version
         run: |
           # Get the latest tag (with v prefix)
-          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          latest_tag=$(git tag -l --sort=-creatordate | head -1 || echo "")
 
           if [ -z "$latest_tag" ]; then
             # No tags exist, start from v0.0.0
@@ -106,7 +106,7 @@ jobs:
           fi
 
           # Add only the essential files for the GitHub Action
-          git add README.md action.yml dist/
+          git add --force README.md action.yml dist/
           git commit -m "chore: release v${{ steps.version_bump.outputs.new_version }}"
 
           # Create tag from release branch
