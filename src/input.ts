@@ -32,7 +32,9 @@ export default class Input {
       case 'false':
         return false;
       default:
-        throw new Error();
+        throw new Error(
+          `Invalid boolean input: ${input}. Expected 'true' or 'false'.`
+        );
     }
   }
 }

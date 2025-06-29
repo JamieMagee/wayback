@@ -12,9 +12,10 @@
     ".": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "pkgroll --minify",
-    "lint": "biome check ./src",
-    "start": "tsx"
+    "build": "node esbuild.mjs --production",
+    "build:dev": "node esbuild.mjs",
+    "test": "jest",
+    "lint": "biome check ./src"
   },
   "devDependencies": {
     "@actions/core": "1.11.1",
@@ -26,12 +27,11 @@
     "@types/node": "20.19.2",
     "axios": "1.10.0",
     "chalk": "4.1.2",
+    "esbuild": "^0.25.5",
     "form-data": "4.0.3",
     "jest": "30.0.3",
     "nock": "14.0.5",
-    "pkgroll": "2.13.1",
     "ts-jest": "29.4.0",
-    "tsx": "4.20.3",
     "typescript": "5.8.3"
   }
 }
