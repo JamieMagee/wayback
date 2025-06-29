@@ -1,12 +1,12 @@
+import { vi } from 'vitest';
 import run from '../src/runner';
-import { getName } from './utils';
 
-jest.mock('../src/input.ts');
-jest.mock('../src/wayback.ts');
+vi.mock('../src/input.ts');
+vi.mock('../src/wayback.ts');
 
-describe(getName(__filename), () => {
+describe('runner.spec.ts', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('works', async () => {

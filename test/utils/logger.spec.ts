@@ -1,16 +1,17 @@
+import { vi } from 'vitest';
 import * as _core from '@actions/core';
 import log from '../../src/utils/logger';
-import { getName, mocked } from '../utils';
+import { mocked } from '../utils';
 
-jest.unmock('../../src/utils/logger');
+vi.unmock('../../src/utils/logger');
 
 const core = mocked(_core);
 
-describe(getName(__filename), () => {
-  const logger = jest.fn();
+describe('logger.spec.ts', () => {
+  const logger = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     console.log = logger;
     console.dir = logger;
   });

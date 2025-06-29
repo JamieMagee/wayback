@@ -6,6 +6,9 @@
   "compilerOptions": {
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "types": [
+      "vitest/globals"
+    ]
+  },
 }

@@ -1,6 +1,6 @@
 {
   "recommendations": [
     "biomejs.biome",
-    "Orta.vscode-jest"
+    "vitest.explorer"
   ]
 }

@@ -1,11 +1,11 @@
 import fs from 'fs';
+import { vi } from 'vitest';
 import * as core from '@actions/core';
 import nock from 'nock';
 import Input from '../src/input';
 import WayBack from '../src/wayback';
-import { getName } from './utils';
 
-jest.mock('../src/input');
+vi.mock('../src/input');
 const testGuid = 'spn2-b559c7edd3fb67374c1a25e739cdd7edd1d79949';
 const testDomain = 'example.com';
 const testOutput =
@@ -14,11 +14,11 @@ const htmlResponse = fs.readFileSync('test/__fixtures__/save.html');
 const pendingJson = fs.readFileSync('test/__fixtures__/wayback.pending.json');
 const successJson = fs.readFileSync('test/__fixtures__/wayback.success.json');
 
-describe(getName(__filename), () => {
+describe('wayback.spec.ts', () => {
   const waybackScope = nock('https://web.archive.org/save');
   let input: Input;
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     nock.cleanAll();
     input = new Input();
   });

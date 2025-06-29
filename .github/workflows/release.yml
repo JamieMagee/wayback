@@ -48,7 +48,7 @@ jobs:
 
       - run: pnpm build
 
-      - run: pnpm jest --ci
+      - run: pnpm test
 
       - name: Get current version from Git tags
         id: current_version

@@ -9,7 +9,7 @@ await build({
   bundle: true,
   platform: 'node',
   target: 'node20',
-  format: 'cjs',
+  format: 'esm',
   outfile: 'dist/index.cjs',
   minify: isProduction,
   banner: {

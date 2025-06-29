@@ -30,4 +30,4 @@ jobs:
 
       - run: pnpm build
 
-      - run: pnpm jest --ci --coverage
+      - run: pnpm test

@@ -1,12 +1,13 @@
+import { vi } from 'vitest';
 import * as _core from '@actions/core';
 import Input from '../src/input';
-import { getName, mocked } from './utils';
+import { mocked } from './utils';
 
 const core = mocked(_core);
 
-describe(getName(__filename), () => {
+describe('input.spec.ts', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('works for multiple urls', () => {

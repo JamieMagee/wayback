@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`undefined works for a single url 1`] = `
+exports[`input.spec.ts > works for a single url 1`] = `
 [
   [
     "url",
@@ -12,7 +12,7 @@ exports[`undefined works for a single url 1`] = `
 ]
 `;
 
-exports[`undefined works for a single url 2`] = `
+exports[`input.spec.ts > works for a single url 2`] = `
 [
   [
     "saveErrors",
@@ -35,7 +35,7 @@ exports[`undefined works for a single url 2`] = `
 ]
 `;
 
-exports[`undefined works for a single url 3`] = `
+exports[`input.spec.ts > works for a single url 3`] = `
 Input {
   "saveErrors": true,
   "saveOutlinks": false,
@@ -46,7 +46,7 @@ Input {
 }
 `;
 
-exports[`undefined works for multiple urls 1`] = `
+exports[`input.spec.ts > works for multiple urls 1`] = `
 [
   [
     "url",
@@ -58,7 +58,7 @@ exports[`undefined works for multiple urls 1`] = `
 ]
 `;
 
-exports[`undefined works for multiple urls 2`] = `
+exports[`input.spec.ts > works for multiple urls 2`] = `
 [
   [
     "saveErrors",
@@ -81,7 +81,7 @@ exports[`undefined works for multiple urls 2`] = `
 ]
 `;
 
-exports[`undefined works for multiple urls 3`] = `
+exports[`input.spec.ts > works for multiple urls 3`] = `
 Input {
   "saveErrors": true,
   "saveOutlinks": false,

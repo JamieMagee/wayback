@@ -2,6 +2,7 @@
   "name": "wayback",
   "version": "0.0.0-dev",
   "private": true,
+  "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,22 +15,21 @@
   "scripts": {
     "build": "node esbuild.mjs --production",
     "build:dev": "node esbuild.mjs",
-    "test": "jest",
+    "test": "vitest run",
     "lint": "biome check ./src"
   },
-  "devDependencies": {
+  "dependencies": {
     "@actions/core": "1.11.1",
+    "chalk": "4.1.2"
+  },
+  "devDependencies": {
     "@biomejs/biome": "2.0.6",
-    "@jest/globals": "30.0.3",
     "@tsconfig/node20": "20.1.6",
     "@tsconfig/strictest": "2.0.5",
-    "@types/jest": "30.0.0",
     "@types/node": "20.19.2",
-    "chalk": "4.1.2",
-    "esbuild": "^0.25.5",
-    "jest": "30.0.3",
+    "esbuild": "0.25.5",
     "nock": "14.0.5",
-    "ts-jest": "29.4.0",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitest": "3.2.4"
   }
 }
