@@ -109,8 +109,8 @@ jobs:
           fi
 
           # Ensure dist directory exists and is built
-          if [ ! -d "dist" ] || [ ! -f "dist/index.cjs" ]; then
-            echo "Error: dist/index.cjs not found. Build may have failed."
+          if [ ! -d "dist" ] || [ ! -f "dist/index.mjs" ]; then
+            echo "Error: dist/index.mjs not found. Build may have failed."
             exit 1
           fi
 
