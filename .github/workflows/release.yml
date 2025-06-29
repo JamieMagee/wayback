@@ -52,11 +52,11 @@ jobs:
       - name: Get current version from Git tags
         id: current_version
         run: |
-          # Get the latest tag (with v prefix)
-          latest_tag=$(git tag -l --sort=-creatordate | head -1 || echo "")
+          # Get the latest semantic version tag (v*.*.*) excluding major version tags
+          latest_tag=$(git tag -l 'v*.*.*' --sort=-version:refname | head -1 || echo "")
 
           if [ -z "$latest_tag" ]; then
-            # No tags exist, start from v0.0.0
+            # No semantic version tags exist, start from v0.0.0
             current="0.0.0"
           else
             # Remove 'v' prefix from tag to get version number
@@ -107,6 +107,10 @@ jobs:
             echo "Creating new release branch..."
             git checkout -B release
           fi
+
+          # Rebuild after git reset since dist/ is gitignored
+          echo "Rebuilding project for release..."
+          pnpm build
 
           # Ensure dist directory exists and is built
           if [ ! -d "dist" ] || [ ! -f "dist/index.mjs" ]; then
