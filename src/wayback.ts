@@ -19,20 +19,35 @@ export default class WayBack {
   }
 
   public async save(url: string): Promise<void> {
+    log.info(`Starting archive process for URL: ${url}`);
+
     const requestUrl = `${WayBack.baseWaybackUrl}/${url}`;
     const form = new FormData();
     form.append('url', url);
+
+    // Log the capture options being used
+    const captureOptions: string[] = [];
     if (this.saveErrors) {
       form.append('capture_all', 'on');
+      captureOptions.push('errors');
     }
     if (this.saveOutlinks) {
       form.append('capture_outlinks', 'on');
+      captureOptions.push('outlinks');
     }
     if (this.saveScreenshot) {
       form.append('capture_screenshot', 'on');
+      captureOptions.push('screenshot');
+    }
+
+    if (captureOptions.length > 0) {
+      log.info(`Capture options enabled: ${captureOptions.join(', ')}`);
+    } else {
+      log.info('Using default capture options');
     }
 
     try {
+      log.info('Sending archive request to Wayback Machine...');
       const res = await fetch(requestUrl, {
         method: 'POST',
         body: form,
@@ -42,23 +57,27 @@ export default class WayBack {
       });
 
       if (!res.ok) {
+        log.error(`Archive request failed with status: ${res.status}`);
         await this.handleErrorResponse(res);
         throw new Error(`HTTP error! status: ${res.status}`);
       }
 
+      log.info('Archive request submitted successfully, extracting job ID...');
       const responseText = await res.text();
       const match = WayBack.statusGuidRegex.exec(responseText);
       if (match?.groups?.['guid']) {
         const guid = match.groups?.['guid'];
+        log.info(`Job ID extracted: ${guid}`);
+        log.info('Monitoring archive job status...');
         const saveStatus = await this.pollStatus(guid);
         this.handleStatusResponse(saveStatus);
       } else {
-        log.error('Unable to fetch status');
+        log.error('Unable to extract job ID from response');
         throw new Error('Unable to fetch status');
       }
     } catch (err) {
       if (err instanceof Error) {
-        log.error(err.message);
+        log.error(`Archive process failed: ${err.message}`);
       }
       throw err;
     }
@@ -86,38 +105,57 @@ export default class WayBack {
   }
 
   private handleStatusResponse(saveStatus: SaveStatus): void {
+    log.info(`Archive job completed with status: ${saveStatus.status}`);
+
     switch (saveStatus.status) {
       case 'success': {
+        log.info('Archive successfully created!');
         const archiveUrl = this.getArchiveUrl(saveStatus);
-        log.info(archiveUrl);
+        log.info(`Archive URL: ${archiveUrl}`);
         break;
       }
+      case 'error':
+        log.error('Archive job failed with an error');
+        log.debug('Full error details:', saveStatus);
+        break;
       default:
-        log.debug(saveStatus);
+        log.warn(`Unexpected archive status: ${saveStatus.status}`);
+        log.debug('Full status details:', saveStatus);
     }
   }
 
   private async pollStatus(guid: string): Promise<SaveStatus> {
+    log.debug(`Starting status polling for job: ${guid}`);
     let saveStatus = await this.getSaveStatus(guid);
+    let pollCount = 1;
+
     while (saveStatus.status === 'pending') {
+      log.info(`Archive job still in progress... (check ${pollCount})`);
       await this.sleep(2000);
       saveStatus = await this.getSaveStatus(guid);
+      pollCount++;
     }
+
+    log.info(`Status polling completed after ${pollCount} check(s)`);
     return saveStatus;
   }
 
   private async getSaveStatus(guid: string): Promise<SaveStatus> {
     try {
+      log.debug(`Checking status for job: ${guid}`);
       const response = await fetch(`${WayBack.baseWaybackUrl}/status/${guid}`);
 
       if (!response.ok) {
+        log.error(`Status check failed with HTTP status: ${response.status}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return (await response.json()) as SaveStatus;
+      const status = (await response.json()) as SaveStatus;
+      log.debug(`Current job status: ${status.status}`);
+      return status;
     } catch (err) {
       if (err instanceof Error) {
-        log.error(err.message);
+        log.error(`Failed to get save status: ${err.message}`);
       }
       throw err;
     }
@@ -134,9 +172,11 @@ export default class WayBack {
     // Set output using workflow command equivalent
     const githubOutput = process.env['GITHUB_OUTPUT'];
     if (githubOutput) {
+      log.debug('Setting GitHub Actions output variable');
       fs.appendFileSync(githubOutput, `wayback_url=${archiveUrl}${os.EOL}`, {
         encoding: 'utf8',
       });
+      log.debug('GitHub Actions output variable set successfully');
     }
 
     return archiveUrl;
