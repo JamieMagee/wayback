@@ -1,6 +1,4 @@
 import * as core from '@actions/core';
-import axios, { type AxiosError, type AxiosResponse } from 'axios';
-import FormData from 'form-data';
 import type Input from './input';
 import type { SaveStatus } from './types';
 import log from './utils/logger';
@@ -34,31 +32,40 @@ export default class WayBack {
     }
 
     try {
-      const res = await axios.post<string>(requestUrl, form, {
+      const res = await fetch(requestUrl, {
+        method: 'POST',
+        body: form,
         headers: {
           'User-Agent': 'https://github.com/JamieMagee/wayback',
-          ...form.getHeaders(),
         },
       });
-      const match = WayBack.statusGuidRegex.exec(res.data);
+
+      if (!res.ok) {
+        await this.handleErrorResponse(res);
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const responseText = await res.text();
+      const match = WayBack.statusGuidRegex.exec(responseText);
       if (match?.groups?.['guid']) {
         const guid = match.groups?.['guid'];
         const saveStatus = await this.pollStatus(guid);
         this.handleStatusResponse(saveStatus);
       } else {
         log.error('Unable to fetch status');
-        throw new Error();
+        throw new Error('Unable to fetch status');
       }
     } catch (err) {
-      this.handleErrorResponse((err as AxiosError).response as AxiosResponse);
-      log.error((err as Error).message);
+      if (err instanceof Error) {
+        log.error(err.message);
+      }
       throw err;
     }
   }
 
-  private handleErrorResponse(response: AxiosResponse): void {
+  private async handleErrorResponse(response: Response): Promise<void> {
     const error: string | undefined =
-      response?.headers?.['x-archive-wayback-runtime-error'];
+      response.headers.get('x-archive-wayback-runtime-error') ?? undefined;
     if (error) {
       switch (error) {
         case 'AdministrativeAccessControlException':
@@ -98,11 +105,17 @@ export default class WayBack {
 
   private async getSaveStatus(guid: string): Promise<SaveStatus> {
     try {
-      return (
-        await axios.get<SaveStatus>(`${WayBack.baseWaybackUrl}/status/${guid}`)
-      ).data;
+      const response = await fetch(`${WayBack.baseWaybackUrl}/status/${guid}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return (await response.json()) as SaveStatus;
     } catch (err) {
-      log.error((err as Error).message);
+      if (err instanceof Error) {
+        log.error(err.message);
+      }
       throw err;
     }
   }
