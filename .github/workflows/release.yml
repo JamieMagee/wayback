@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: "Version bump type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
+        with:
+          version: latest
+
+      - name: Set up Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: latest
+          cache: "pnpm"
+
+      - name: Checkout main branch
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.email 'jamie.magee@gmail.com'
+          git config --global user.name 'Jamie Magee'
+
+      - run: pnpm install
+
+      - run: pnpm build
+
+      - run: pnpm jest --ci
+
+      - name: Get current version from Git tags
+        id: current_version
+        run: |
+          # Get the latest tag (with v prefix)
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$latest_tag" ]; then
+            # No tags exist, start from v0.0.0
+            current="0.0.0"
+          else
+            # Remove 'v' prefix from tag to get version number
+            current="${latest_tag#v}"
+          fi
+
+          echo "current=$current" >> $GITHUB_OUTPUT
+          echo "Current version: $current"
+
+      - name: Calculate new version
+        id: version_bump
+        run: |
+          current="${{ steps.current_version.outputs.current }}"
+
+          # Parse current version
+          if [[ "$current" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+            major=${BASH_REMATCH[1]}
+            minor=${BASH_REMATCH[2]}
+            patch=${BASH_REMATCH[3]}
+          else
+            # Default to 0.0.0 if version format is unexpected
+            major=0
+            minor=0
+            patch=0
+          fi
+
+          # Calculate new version (without v prefix)
+          case "${{ inputs.version_bump }}" in
+            major) new_version="$((major + 1)).0.0" ;;
+            minor) new_version="$major.$((minor + 1)).0" ;;
+            patch) new_version="$major.$minor.$((patch + 1))" ;;
+            *) echo "Invalid version bump type" && exit 1 ;;
+          esac
+
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "New version will be: v$new_version"
+
+      - name: Create release branch and tag
+        run: |
+          # Create or checkout release branch
+          git checkout -B release
+
+          # Ensure dist directory exists and is built
+          if [ ! -d "dist" ] || [ ! -f "dist/index.cjs" ]; then
+            echo "Error: dist/index.cjs not found. Build may have failed."
+            exit 1
+          fi
+
+          # Add only the essential files for the GitHub Action
+          git add README.md action.yml dist/
+          git commit -m "chore: release v${{ steps.version_bump.outputs.new_version }}"
+
+          # Create tag from release branch
+          git tag "v${{ steps.version_bump.outputs.new_version }}"
+
+          # Push everything at once
+          git push origin release
+          git push origin "v${{ steps.version_bump.outputs.new_version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version_bump.outputs.new_version }}
+          name: v${{ steps.version_bump.outputs.new_version }}
+          generate_release_notes: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update major version tag
+        run: |
+          version="${{ steps.version_bump.outputs.new_version }}"
+          major=$(echo $version | cut -d. -f1)
+
+          # Switch back to release branch for major version tag
+          git checkout release
+
+          # Force update major version tag to point to latest release
+          git tag -f "v$major"
+          git push origin "v$major" --force
