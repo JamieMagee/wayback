@@ -10,7 +10,7 @@ await build({
   platform: 'node',
   target: 'node20',
   format: 'esm',
-  outfile: 'dist/index.cjs',
+  outfile: 'dist/index.mjs',
   minify: isProduction,
   banner: {
     js: '#!/usr/bin/env node',
