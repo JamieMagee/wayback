@@ -1,8 +1,8 @@
 import * as core from '@actions/core';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import FormData from 'form-data';
-import Input from './input';
-import { SaveStatus } from './types';
+import type Input from './input';
+import type { SaveStatus } from './types';
 import log from './utils/logger';
 
 export default class WayBack {
