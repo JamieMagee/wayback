@@ -1,4 +1,4 @@
-import * as fs from 'node:fs';
+import fs from 'node:fs';
 import { vi } from 'vitest';
 import nock from 'nock';
 import Input from '../src/input';
