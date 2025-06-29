@@ -1,24 +1,18 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`undefined works 1`] = `
+exports[`logger.spec.ts > works 1`] = `
 [
   [
-    "[[34mDEBUG[39m] test",
+    "::debug::test",
   ],
   [
-    {
-      "code": 1,
-      "name": "test",
-    },
+    "::notice::test it",
   ],
   [
-    "[[32mINFO[39m] test it",
+    "::warning::test it",
   ],
   [
-    "[[33mWARN[39m] test it",
-  ],
-  [
-    "[[31mERROR[39m] test",
+    "::error::test",
   ],
 ]
 `;
