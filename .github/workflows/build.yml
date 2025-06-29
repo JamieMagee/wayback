@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - 'renovate/**'
+      - "renovate/**"
   pull_request:
   workflow_dispatch:
 
@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: latest
+          node-version: 20
+          cache: "pnpm"
 
       - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
         with:
           version: latest
-
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - run: pnpm install
 
@@ -30,59 +30,4 @@ jobs:
 
       - run: pnpm build
 
-      - run: pnpm jest --maxWorkers=2 --ci --coverage
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
-        with:
-          node-version: latest
-
-      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
-        with:
-          version: latest
-
-      - name: Init platform
-        id: init
-        shell: bash
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.symlinks true
-          git config --global user.email 'jamie.magee@gmail.com'
-          git config --global user.name  'Jamie Magee'
-
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-        with:
-          fetch-depth: 0
-          ref: 'release'
-
-      - name: fetch pr
-        if: ${{github.event_name == 'pull_request'}}
-        run: |
-          git fetch origin ${{ github.ref }}
-
-      - name: Merge
-        id: merge
-        run: |
-          git merge --allow-unrelated-histories --no-ff -m 'skip: merge (${{ github.sha }}) [skip release]' ${{ github.sha }}
-          commit=$(git rev-parse HEAD)
-          echo "::set-output name=commit::${commit}"
-
-      - run: pnpm install
-
-      - name: Push release branch
-        run: git push origin release:release
-        if: ${{github.ref == 'refs/heads/main'}}
-
-      - name: Release
-        run: |
-          # override for semantic-release
-          export GITHUB_REF=refs/heads/release GITHUB_SHA=${{ steps.merge.outputs.commit }}
-          pnpm release
-        if: ${{github.ref == 'refs/heads/main'}}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - run: pnpm jest --ci --coverage
