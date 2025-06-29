@@ -42,8 +42,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.19.2)
       nock:
-        specifier: 13.5.1
-        version: 13.5.1
+        specifier: 13.5.6
+        version: 13.5.6
       pkgroll:
         specifier: 2.13.1
         version: 2.13.1(typescript@5.3.3)
@@ -1542,8 +1542,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  nock@13.5.1:
-    resolution: {integrity: sha512-+s7b73fzj5KnxbKH4Oaqz07tQ8degcMilU4rrmnKvI//b0JMBU4wEXFQ8zqr+3+L4eWSfU3H/UoIVGUV0tue1Q==}
+  nock@13.5.6:
+    resolution: {integrity: sha512-o2zOYiCpzRqSzPj0Zt/dQ/DqZeYoaQ7TUonc/xUPjCGl9WeHpNbxgVvOquXYAaJzI0M9BXV3HTzG0p8IUAbBTQ==}
     engines: {node: '>= 10.13'}
 
   node-int64@0.4.0:
@@ -3496,7 +3496,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  nock@13.5.1:
+  nock@13.5.6:
     dependencies:
       debug: 4.4.1
       json-stringify-safe: 5.0.1
