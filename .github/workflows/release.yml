@@ -96,8 +96,17 @@ jobs:
 
       - name: Create release branch and tag
         run: |
-          # Create or checkout release branch
-          git checkout -B release
+          # Check if release branch exists on remote
+          if git ls-remote --heads origin release | grep -q release; then
+            echo "Release branch exists on remote, fetching and resetting..."
+            git fetch origin release
+            git checkout -B release origin/release
+            # Reset to main to get latest changes
+            git reset --hard main
+          else
+            echo "Creating new release branch..."
+            git checkout -B release
+          fi
 
           # Ensure dist directory exists and is built
           if [ ! -d "dist" ] || [ ! -f "dist/index.cjs" ]; then
@@ -112,8 +121,8 @@ jobs:
           # Create tag from release branch
           git tag "v${{ steps.version_bump.outputs.new_version }}"
 
-          # Push everything at once
-          git push origin release
+          # Push everything at once (force push release branch since we reset it)
+          git push origin release --force
           git push origin "v${{ steps.version_bump.outputs.new_version }}"
 
       - name: Create GitHub Release
