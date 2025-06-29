@@ -18,9 +18,7 @@
     "test": "vitest run",
     "lint": "biome check ./src"
   },
-  "dependencies": {
-    "@actions/core": "1.11.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
     "@tsconfig/node20": "20.1.6",

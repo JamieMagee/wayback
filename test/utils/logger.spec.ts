@@ -1,5 +1,4 @@
 import { vi } from 'vitest';
-import * as _core from '@actions/core';
 import log from '../../src/utils/logger';
 
 vi.unmock('../../src/utils/logger');

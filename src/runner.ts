@@ -1,4 +1,3 @@
-import { setFailed } from '@actions/core';
 import Input from './input';
 import WayBack from './wayback';
 
@@ -11,6 +10,8 @@ export default async function run(): Promise<void> {
       await wayback.save(url);
     }
   } catch (error) {
-    setFailed((error as Error).message);
+    // Equivalent to core.setFailed() - output error and exit with code 1
+    console.log(`::error::${(error as Error).message}`);
+    process.exit(1);
   }
 }

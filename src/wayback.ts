@@ -1,4 +1,5 @@
-import * as core from '@actions/core';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
 import type Input from './input';
 import type { SaveStatus } from './types';
 import log from './utils/logger';
@@ -86,9 +87,11 @@ export default class WayBack {
 
   private handleStatusResponse(saveStatus: SaveStatus): void {
     switch (saveStatus.status) {
-      case 'success':
-        log.info(this.getArchiveUrl(saveStatus));
+      case 'success': {
+        const archiveUrl = this.getArchiveUrl(saveStatus);
+        log.info(archiveUrl);
         break;
+      }
       default:
         log.debug(saveStatus);
     }
@@ -127,7 +130,15 @@ export default class WayBack {
   private getArchiveUrl(saveStatus: SaveStatus): string | undefined {
     // original_url is present when status === 'success'
     const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
-    core.setOutput('wayback_url', archiveUrl);
+
+    // Set output using workflow command equivalent
+    const githubOutput = process.env['GITHUB_OUTPUT'];
+    if (githubOutput) {
+      fs.appendFileSync(githubOutput, `wayback_url=${archiveUrl}${os.EOL}`, {
+        encoding: 'utf8',
+      });
+    }
+
     return archiveUrl;
   }
 }

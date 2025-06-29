@@ -1,30 +1,38 @@
-import fs from 'fs';
+import * as fs from 'node:fs';
 import { vi } from 'vitest';
-import * as core from '@actions/core';
 import nock from 'nock';
 import Input from '../src/input';
 import WayBack from '../src/wayback';
 
 vi.mock('../src/input');
+
 const testGuid = 'spn2-b559c7edd3fb67374c1a25e739cdd7edd1d79949';
 const testDomain = 'example.com';
 const testOutput =
   'https://web.archive.org/web/20220328013741/https://example.com/';
+
+// Read files before mocking fs
 const htmlResponse = fs.readFileSync('test/__fixtures__/save.html');
 const pendingJson = fs.readFileSync('test/__fixtures__/wayback.pending.json');
 const successJson = fs.readFileSync('test/__fixtures__/wayback.success.json');
+
+// Create a spy for appendFileSync
+const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync').mockImplementation(() => {});
 
 describe('wayback.spec.ts', () => {
   const waybackScope = nock('https://web.archive.org/save');
   let input: Input;
   beforeEach(() => {
-    vi.clearAllMocks();
+    mockAppendFileSync.mockClear();
     nock.cleanAll();
     input = new Input();
+    // Mock GITHUB_OUTPUT environment variable
+    process.env['GITHUB_OUTPUT'] = '/tmp/github_output';
   });
 
   afterEach(() => {
     nock.abortPendingRequests();
+    delete process.env['GITHUB_OUTPUT'];
   });
 
   it('works', async () => {
@@ -35,8 +43,12 @@ describe('wayback.spec.ts', () => {
       .reply(200, successJson);
     const wayback = new WayBack(input);
     await wayback.save(testDomain);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
-    expect(core.setOutput).toHaveBeenCalledWith('wayback_url', testOutput);
+    expect(mockAppendFileSync).toHaveBeenCalledTimes(1);
+    expect(mockAppendFileSync).toHaveBeenCalledWith(
+      '/tmp/github_output',
+      `wayback_url=${testOutput}\n`,
+      { encoding: 'utf8' }
+    );
     expect(nock.isDone()).toBe(true);
   });
 
@@ -50,8 +62,12 @@ describe('wayback.spec.ts', () => {
       .reply(200, successJson);
     const wayback = new WayBack(input);
     await wayback.save(testDomain);
-    expect(core.setOutput).toHaveBeenCalledTimes(1);
-    expect(core.setOutput).toHaveBeenCalledWith('wayback_url', testOutput);
+    expect(mockAppendFileSync).toHaveBeenCalledTimes(1);
+    expect(mockAppendFileSync).toHaveBeenCalledWith(
+      '/tmp/github_output',
+      `wayback_url=${testOutput}\n`,
+      { encoding: 'utf8' }
+    );
     expect(nock.isDone()).toBe(true);
   });
 
@@ -59,7 +75,7 @@ describe('wayback.spec.ts', () => {
     waybackScope.post(`/${testDomain}`).reply(500);
     const wayback = new WayBack(input);
     await expect(wayback.save(testDomain)).rejects.toThrow();
-    expect(core.setOutput).toHaveBeenCalledTimes(0);
+    expect(mockAppendFileSync).toHaveBeenCalledTimes(0);
   });
 
   it('to throw', async () => {
@@ -70,14 +86,14 @@ describe('wayback.spec.ts', () => {
       .reply(404);
     const wayback = new WayBack(input);
     await expect(wayback.save(testDomain)).rejects.toThrow();
-    expect(core.setOutput).toHaveBeenCalledTimes(0);
+    expect(mockAppendFileSync).toHaveBeenCalledTimes(0);
   });
 
   it('throws on empty response', async () => {
     waybackScope.post(`/${testDomain}`).reply(200, '');
     const wayback = new WayBack(input);
     await expect(wayback.save(testDomain)).rejects.toThrow();
-    expect(core.setOutput).toHaveBeenCalledTimes(0);
+    expect(mockAppendFileSync).toHaveBeenCalledTimes(0);
   });
 
   it.each([
@@ -92,6 +108,6 @@ describe('wayback.spec.ts', () => {
     });
     const wayback = new WayBack(input);
     await expect(wayback.save(testDomain)).rejects.toThrow();
-    expect(core.setOutput).toHaveBeenCalledTimes(0);
+    expect(mockAppendFileSync).toHaveBeenCalledTimes(0);
   });
 });

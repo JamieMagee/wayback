@@ -1,45 +1,47 @@
 import { vi } from 'vitest';
-import * as _core from '@actions/core';
 import Input from '../src/input';
-import { mocked } from './utils';
-
-const core = mocked(_core);
 
 describe('input.spec.ts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Clear environment variables
+    delete process.env['INPUT_URL'];
+    delete process.env['INPUT_SAVEERRORS'];
+    delete process.env['INPUT_SAVEOUTLINKS'];
+    delete process.env['INPUT_SAVESCREENSHOT'];
   });
 
   it('works for multiple urls', () => {
-    core.getMultilineInput.mockReturnValue(['example.com', 'example.com']);
-    core.getInput
-      .mockReturnValueOnce('true')
-      .mockReturnValueOnce('false')
-      .mockReturnValueOnce('true');
+    process.env['INPUT_URL'] = 'example.com\nexample.com';
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'true';
+    
     const input = new Input();
 
-    expect(core.getMultilineInput.mock.calls).toMatchSnapshot();
-    expect(core.getInput.mock.calls).toMatchSnapshot();
-    expect(input).toMatchSnapshot();
+    expect(input.url).toEqual(['example.com', 'example.com']);
+    expect(input.saveErrors).toBe(true);
+    expect(input.saveOutlinks).toBe(false);
+    expect(input.saveScreenshot).toBe(true);
   });
 
   it('works for a single url', () => {
-    core.getMultilineInput.mockReturnValue(['example.com']);
-    core.getInput
-      .mockReturnValueOnce('true')
-      .mockReturnValueOnce('false')
-      .mockReturnValueOnce('true');
+    process.env['INPUT_URL'] = 'example.com';
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'true';
+    
     const input = new Input();
 
-    expect(core.getMultilineInput.mock.calls).toMatchSnapshot();
-    expect(core.getInput.mock.calls).toMatchSnapshot();
-    expect(input).toMatchSnapshot();
+    expect(input.url).toEqual(['example.com']);
+    expect(input.saveErrors).toBe(true);
+    expect(input.saveOutlinks).toBe(false);
+    expect(input.saveScreenshot).toBe(true);
   });
 
   it('throws', () => {
-    core.getInput
-      .mockReturnValueOnce('example.com')
-      .mockReturnValueOnce('notaboolean');
+    process.env['INPUT_URL'] = 'example.com';
+    process.env['INPUT_SAVEERRORS'] = 'notaboolean';
 
     expect(() => {
       new Input();
