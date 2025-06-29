@@ -7,11 +7,3 @@ import type { MockedObject } from 'vitest';
 export function mocked<T>(module: T): MockedObject<T> {
   return module as never;
 }
-
-/**
- * Simply wrapper to create partial mocks.
- * @param obj Object to cast to final type
- */
-export function partial<T>(obj?: Partial<T>): T {
-  return (obj ?? {}) as T;
-}
