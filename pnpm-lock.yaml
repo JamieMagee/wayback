@@ -24,8 +24,8 @@ importers:
         specifier: 0.25.7
         version: 0.25.7
       nock:
-        specifier: 14.0.5
-        version: 14.0.5
+        specifier: 14.0.6
+        version: 14.0.6
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -247,8 +247,8 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.4':
     resolution: {integrity: sha512-VT2+G1VQs/9oz078bLrYbecdZKs912zQlkelYpuf+SXF+QvZDYJlbx/LSx+meSAwdDFnF8FVXW92AVjjkVmgFw==}
 
-  '@mswjs/interceptors@0.38.7':
-    resolution: {integrity: sha512-Jkb27iSn7JPdkqlTqKfhncFfnEZsIJVYxsFbUSWEkxdIPdsyngrhoDBk0/BGD2FQcRH99vlRrkHpNTyKqI+0/w==}
+  '@mswjs/interceptors@0.39.3':
+    resolution: {integrity: sha512-9bw/wBL7pblsnOCIqvn1788S9o4h+cC5HWXg0Xhh0dOzsZ53IyfmBM+FYqpDDPbm0xjCqEqvCITloF3Dm4TXRQ==}
     engines: {node: '>=18'}
 
   '@open-draft/deferred-promise@2.2.0':
@@ -487,8 +487,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nock@14.0.5:
-    resolution: {integrity: sha512-R49fALR9caB6vxuSWUIaK2eBYeTloZQUFBZ4rHO+TbhMGQHtwnhdqKLYki+o+8qMgLvoBYWrp/2KzGPhxL4S6w==}
+  nock@14.0.6:
+    resolution: {integrity: sha512-67n1OfusL/ON57fwFJ6ZurSJa/msYVQmqlz9rCel2HJYj4Zeb8v9TcmRdEW+PV2i9Fm2358umSvzZukhw/E8DA==}
     engines: {node: '>=18.20.0 <20 || >=20.12.1'}
 
   outvariant@1.4.3:
@@ -765,7 +765,7 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.4': {}
 
-  '@mswjs/interceptors@0.38.7':
+  '@mswjs/interceptors@0.39.3':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/logger': 0.3.0
@@ -981,9 +981,9 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nock@14.0.5:
+  nock@14.0.6:
     dependencies:
-      '@mswjs/interceptors': 0.38.7
+      '@mswjs/interceptors': 0.39.3
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
 
