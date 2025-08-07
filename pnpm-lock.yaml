@@ -24,8 +24,8 @@ importers:
         specifier: 0.25.8
         version: 0.25.8
       nock:
-        specifier: 14.0.8
-        version: 14.0.8
+        specifier: 14.0.9
+        version: 14.0.9
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -487,8 +487,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nock@14.0.8:
-    resolution: {integrity: sha512-5DCGrkwK1f8kxUvqvzLWb97XuDUY4/t5M3ZcogPfLGvC2wO8wjRQsIDSXj2L6e1J0Dv8xscf9wWSvGnS3OL29Q==}
+  nock@14.0.9:
+    resolution: {integrity: sha512-aVIPgW9WVyb3XPCqfrwETc+hazxzgt8/QvARHAhC6BYHtTsZONUjlXoIB8EGmwqUBkKvOew4yqkGRBmwctdCrw==}
     engines: {node: '>=18.20.0 <20 || >=20.12.1'}
 
   outvariant@1.4.3:
@@ -981,7 +981,7 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nock@14.0.8:
+  nock@14.0.9:
     dependencies:
       '@mswjs/interceptors': 0.39.5
       json-stringify-safe: 5.0.1
