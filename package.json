@@ -19,7 +19,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@tsconfig/node20": "20.1.6",
-    "@tsconfig/strictest": "2.0.5",
+    "@tsconfig/strictest": "2.0.6",
     "@types/node": "20.19.17",
     "esbuild": "0.25.10",
     "nock": "14.0.10",
