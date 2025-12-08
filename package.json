@@ -20,7 +20,7 @@
     "@biomejs/biome": "2.3.8",
     "@tsconfig/node20": "20.1.8",
     "@tsconfig/strictest": "2.0.8",
-    "@types/node": "20.19.25",
+    "@types/node": "20.19.26",
     "esbuild": "0.27.1",
     "nock": "14.0.10",
     "typescript": "5.9.3",
