@@ -21,7 +21,7 @@
     "@tsconfig/node20": "20.1.9",
     "@tsconfig/strictest": "2.0.8",
     "@types/node": "24.10.11",
-    "esbuild": "0.27.2",
+    "esbuild": "0.27.3",
     "nock": "14.0.10",
     "typescript": "5.9.3",
     "vitest": "4.0.18"
