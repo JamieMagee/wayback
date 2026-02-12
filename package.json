@@ -17,7 +17,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@biomejs/biome": "2.3.14",
+    "@biomejs/biome": "2.3.15",
     "@tsconfig/node20": "20.1.9",
     "@tsconfig/strictest": "2.0.8",
     "@types/node": "24.10.13",
