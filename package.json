@@ -16,7 +16,7 @@
     "lint": "biome check ./src"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.0",
+    "@biomejs/biome": "2.4.1",
     "@tsconfig/node-ts": "^23.6.4",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
