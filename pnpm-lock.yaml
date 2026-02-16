@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.4.0
         version: 2.4.0
+      '@tsconfig/node-ts':
+        specifier: ^23.6.4
+        version: 23.6.4
       '@tsconfig/node24':
         specifier: 24.0.4
         version: 24.0.4
@@ -387,6 +390,9 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@tsconfig/node-ts@23.6.4':
+    resolution: {integrity: sha512-37BMJvNQZ+vTgd1xG2TGBkJ6ENeT4eO4Wh2CHrnn0IwH7ybLFCzh4Uc//kc7UIvqiRac4uGdIc1meKOjMSlKzw==}
 
   '@tsconfig/node24@24.0.4':
     resolution: {integrity: sha512-2A933l5P5oCbv6qSxHs7ckKwobs8BDAe9SJ/Xr2Hy+nDlwmLE1GhFh/g/vXGRZWgxBg9nX/5piDtHR9Dkw/XuA==}
@@ -848,6 +854,8 @@ snapshots:
     optional: true
 
   '@standard-schema/spec@1.1.0': {}
+
+  '@tsconfig/node-ts@23.6.4': {}
 
   '@tsconfig/node24@24.0.4': {}
 
