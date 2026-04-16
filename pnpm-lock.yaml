@@ -12,7 +12,7 @@ importers:
         specifier: 2.4.12
         version: 2.4.12
       '@tsconfig/node-ts':
-        specifier: ^23.6.4
+        specifier: 23.6.4
         version: 23.6.4
       '@tsconfig/node24':
         specifier: 24.0.4
