@@ -18,6 +18,16 @@ with:
   url: jamiemagee.co.uk
 ```
 
+### Auto-detect from CNAME
+
+If your repository has a `CNAME` file (e.g. for GitHub Pages), the action will
+automatically use the domain from that file. No `url` input is needed.
+
+```yaml
+name: Save my site
+uses: JamieMagee/wayback@v2
+```
+
 ### Advanced
 
 ```yaml
@@ -36,9 +46,10 @@ with:
 
 ### `url`
 
-**[Required]** The web page to save to the Wayback Machine.
+**[Optional]** The web page to save to the Wayback Machine.
 Can include or exclude `http://`, `https://`, `www.`, etc.
 Can be a single URL or a list of URLs.
+If not provided, the action will attempt to detect the URL from a `CNAME` file in the repository.
 
 ### `saveErrors`
 
