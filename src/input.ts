@@ -1,26 +1,27 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import * as core from '@actions/core';
 
 export default class Input {
   readonly url: string[];
-  readonly saveErrors = this.toBoolean(
-    this.getInput('saveErrors', { trimWhitespace: true })
-  );
-  readonly saveOutlinks = this.toBoolean(
-    this.getInput('saveOutlinks', { trimWhitespace: true })
-  );
-  readonly saveScreenshot = this.toBoolean(
-    this.getInput('saveScreenshot', { trimWhitespace: true })
-  );
-  readonly skipFirstArchive = this.toBoolean(
-    this.getInput('skipFirstArchive', { trimWhitespace: true }) || 'false'
-  );
-  readonly ifNotArchivedWithin = this.getInput('ifNotArchivedWithin', {
+  readonly saveErrors = core.getBooleanInput('saveErrors', {
+    trimWhitespace: true,
+  });
+  readonly saveOutlinks = core.getBooleanInput('saveOutlinks', {
+    trimWhitespace: true,
+  });
+  readonly saveScreenshot = core.getBooleanInput('saveScreenshot', {
+    trimWhitespace: true,
+  });
+  readonly skipFirstArchive = core.getBooleanInput('skipFirstArchive', {
+    trimWhitespace: true,
+  });
+  readonly ifNotArchivedWithin = core.getInput('ifNotArchivedWithin', {
     trimWhitespace: true,
   });
 
   constructor() {
-    const urls = this.getMultilineInput('url', {
+    const urls = core.getMultilineInput('url', {
       required: false,
       trimWhitespace: true,
     });
@@ -55,41 +56,5 @@ export default class Input {
       // message if no URL is available from any source.
     }
     return [];
-  }
-
-  private getInput(
-    name: string,
-    options?: { trimWhitespace?: boolean }
-  ): string {
-    const value =
-      process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
-    return options?.trimWhitespace ? value.trim() : value;
-  }
-
-  private getMultilineInput(
-    name: string,
-    options?: { required?: boolean; trimWhitespace?: boolean }
-  ): string[] {
-    const value = this.getInput(name, options);
-    if (!value && options?.required) {
-      throw new Error(`Input required and not supplied: ${name}`);
-    }
-
-    const lines = value.split('\n').filter((line) => line !== '');
-
-    return options?.trimWhitespace ? lines.map((line) => line.trim()) : lines;
-  }
-
-  private toBoolean(input: string): boolean {
-    switch (input.toLowerCase()) {
-      case 'true':
-        return true;
-      case 'false':
-        return false;
-      default:
-        throw new Error(
-          `Invalid boolean input: ${input}. Expected 'true' or 'false'.`
-        );
-    }
   }
 }

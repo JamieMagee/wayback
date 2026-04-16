@@ -1,3 +1,4 @@
+import * as core from '@actions/core';
 import Input from './input';
 import type { SaveResult } from './types';
 import log from './utils/logger';
@@ -10,8 +11,8 @@ export default async function run(): Promise<void> {
   try {
     input = new Input();
   } catch (error) {
-    console.log(`::error::${(error as Error).message}`);
-    process.exit(1);
+    core.setFailed((error as Error).message);
+    return;
   }
 
   const wayback = new WayBack(input);
@@ -35,10 +36,9 @@ export default async function run(): Promise<void> {
     const summary = failures
       .map(({ url, error }) => `${url}: ${error.message}`)
       .join('; ');
-    console.log(
-      `::error::Failed to archive ${failures.length}/${input.url.length} URL(s): ${summary}`
+    core.setFailed(
+      `Failed to archive ${failures.length}/${input.url.length} URL(s): ${summary}`
     );
-    process.exit(1);
   }
 }
 
