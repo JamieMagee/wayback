@@ -30,7 +30,7 @@ function error(msg: unknown, ...args: unknown[]): void {
 
 const log = (m: unknown, ...args: unknown[]): void => debug(m, ...args);
 
-log.debug = (m: unknown, ...args: unknown[]): void => info(m, ...args);
+log.debug = (m: unknown, ...args: unknown[]): void => debug(m, ...args);
 log.info = (m: unknown, ...args: unknown[]): void => info(m, ...args);
 log.warn = (m: unknown, ...args: unknown[]): void => warn(m, ...args);
 log.error = (m: unknown, ...args: unknown[]): void => error(m, ...args);
