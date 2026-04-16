@@ -39,8 +39,11 @@ export default class Input {
       if (content) {
         return [content];
       }
-    } catch {
-      // CNAME file not found or unreadable
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code !== 'ENOENT' && code !== 'ENOTDIR') {
+        throw error;
+      }
     }
     return [];
   }
