@@ -1,8 +1,7 @@
+import fs from 'node:fs';
+
 export default class Input {
-  readonly url = this.getMultilineInput('url', {
-    required: true,
-    trimWhitespace: true,
-  });
+  readonly url: string[];
   readonly saveErrors = this.toBoolean(
     this.getInput('saveErrors', { trimWhitespace: true })
   );
@@ -14,13 +13,35 @@ export default class Input {
   );
 
   constructor() {
+    const urls = this.getMultilineInput('url', {
+      required: false,
+      trimWhitespace: true,
+    });
+
+    this.url = urls.length > 0 ? urls : this.detectFromCname();
     this.validate();
   }
 
   validate(): void {
     if (this.url.length === 0) {
-      throw new Error('input.url must not be empty');
+      throw new Error(
+        'No URL provided and no CNAME file found. Either set the url input or ensure a CNAME file exists in the repository.'
+      );
     }
+  }
+
+  private detectFromCname(): string[] {
+    try {
+      const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
+      const cnamePath = `${workspace}/CNAME`;
+      const content = fs.readFileSync(cnamePath, 'utf8').trim();
+      if (content) {
+        return [content];
+      }
+    } catch {
+      // CNAME file not found or unreadable
+    }
+    return [];
   }
 
   private getInput(

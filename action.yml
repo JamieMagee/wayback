@@ -6,8 +6,8 @@ branding:
   color: 'red'
 inputs:
   url:
-    required: true
-    description: 'URL to submit to the wayback machine'
+    required: false
+    description: 'URL to submit to the wayback machine. If not provided, will attempt to detect from a CNAME file in the repository.'
   saveErrors:
     required: false
     default: 'true'
