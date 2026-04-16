@@ -66,6 +66,15 @@ Defaults to `false`.
 If `true`, the Wayback Machine will save a screenshot of the web page.
 Defaults to `false`.
 
+### `skipFirstArchive`
+
+If `true`, skip checking whether this is the first capture of the URL. Makes captures faster.
+Defaults to `false`.
+
+### `ifNotArchivedWithin`
+
+Only capture the URL if the most recent existing capture is older than this value. Accepts SPN2 timedelta strings (e.g. `1d`, `3h 20m`) or plain seconds (e.g. `3600`). Supports a comma-separated pair (e.g. `1d,7d`) to apply a different value to outlinks.
+
 ## Outputs
 
 ### `wayback_url`

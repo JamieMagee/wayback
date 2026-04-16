@@ -53,6 +53,17 @@ export default class WayBack {
       form.append('capture_screenshot', '1');
       captureOptions.push('screenshot');
     }
+    if (this.input.skipFirstArchive) {
+      form.append('skip_first_archive', '1');
+      captureOptions.push('skip-first-archive');
+    }
+    if (this.input.ifNotArchivedWithin) {
+      form.append('if_not_archived_within', this.input.ifNotArchivedWithin);
+      captureOptions.push(
+        `if-not-archived-within=${this.input.ifNotArchivedWithin}`
+      );
+    }
+
     if (captureOptions.length > 0) {
       log.info(`Capture options enabled: ${captureOptions.join(', ')}`);
     } else {

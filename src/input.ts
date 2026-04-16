@@ -12,6 +12,12 @@ export default class Input {
   readonly saveScreenshot = this.toBoolean(
     this.getInput('saveScreenshot', { trimWhitespace: true })
   );
+  readonly skipFirstArchive = this.toBoolean(
+    this.getInput('skipFirstArchive', { trimWhitespace: true }) || 'false'
+  );
+  readonly ifNotArchivedWithin = this.getInput('ifNotArchivedWithin', {
+    trimWhitespace: true,
+  });
 
   constructor() {
     const urls = this.getMultilineInput('url', {

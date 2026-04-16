@@ -104,6 +104,27 @@ describe('wayback.spec.ts', () => {
     });
   });
 
+  it('sends skip_first_archive and if_not_archived_within when configured', async () => {
+    input = Object.assign(new Input(), {
+      skipFirstArchive: true,
+      ifNotArchivedWithin: '1d',
+    });
+    waybackScope
+      .post(
+        '/save',
+        (body) =>
+          body.includes('skip_first_archive') &&
+          body.includes('if_not_archived_within') &&
+          body.includes('1d')
+      )
+      .reply(200, htmlResponse)
+      .get(`/save/status/${testGuid}`)
+      .reply(200, successBody);
+    const wayback = makeWayback();
+    await wayback.save(testDomain);
+    expect(nock.isDone()).toBe(true);
+  });
+
   it('throws when the status endpoint reports an error', async () => {
     waybackScope
       .post('/save')

@@ -3,4 +3,6 @@ export default class Input {
   readonly saveErrors = true;
   readonly saveOutlinks = true;
   readonly saveScreenshot = true;
+  readonly skipFirstArchive = false;
+  readonly ifNotArchivedWithin = '';
 }
