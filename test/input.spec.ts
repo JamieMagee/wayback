@@ -1,5 +1,8 @@
+import fs from 'node:fs';
 import { vi } from 'vitest';
 import Input from '../src/input';
+
+vi.mock('node:fs', { spy: true });
 
 describe('input.spec.ts', () => {
   beforeEach(() => {
@@ -9,6 +12,7 @@ describe('input.spec.ts', () => {
     delete process.env['INPUT_SAVEERRORS'];
     delete process.env['INPUT_SAVEOUTLINKS'];
     delete process.env['INPUT_SAVESCREENSHOT'];
+    delete process.env['GITHUB_WORKSPACE'];
   });
 
   it('works for multiple urls', () => {
@@ -16,7 +20,7 @@ describe('input.spec.ts', () => {
     process.env['INPUT_SAVEERRORS'] = 'true';
     process.env['INPUT_SAVEOUTLINKS'] = 'false';
     process.env['INPUT_SAVESCREENSHOT'] = 'true';
-    
+
     const input = new Input();
 
     expect(input.url).toEqual(['example.com', 'example.com']);
@@ -30,7 +34,7 @@ describe('input.spec.ts', () => {
     process.env['INPUT_SAVEERRORS'] = 'true';
     process.env['INPUT_SAVEOUTLINKS'] = 'false';
     process.env['INPUT_SAVESCREENSHOT'] = 'true';
-    
+
     const input = new Input();
 
     expect(input.url).toEqual(['example.com']);
@@ -39,12 +43,73 @@ describe('input.spec.ts', () => {
     expect(input.saveScreenshot).toBe(true);
   });
 
-  it('throws', () => {
+  it('throws on invalid boolean', () => {
     process.env['INPUT_URL'] = 'example.com';
     process.env['INPUT_SAVEERRORS'] = 'notaboolean';
 
     expect(() => {
       new Input();
     }).toThrow();
+  });
+
+  it('detects URL from CNAME file', () => {
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'false';
+    process.env['GITHUB_WORKSPACE'] = '/tmp/test-repo';
+
+    vi.mocked(fs.readFileSync).mockReturnValue('example.org\n');
+
+    const input = new Input();
+
+    expect(input.url).toEqual(['example.org']);
+    expect(vi.mocked(fs.readFileSync)).toHaveBeenCalledWith(
+      '/tmp/test-repo/CNAME',
+      'utf8'
+    );
+  });
+
+  it('throws when no URL and no CNAME file', () => {
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'false';
+
+    const err = new Error('ENOENT: no such file or directory') as NodeJS.ErrnoException;
+    err.code = 'ENOENT';
+    vi.mocked(fs.readFileSync).mockImplementation(() => {
+      throw err;
+    });
+
+    expect(() => {
+      new Input();
+    }).toThrow('No URL provided and no CNAME file found');
+  });
+
+  it('falls back to clear error when CNAME read fails with an unexpected error', () => {
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'false';
+
+    const err = new Error('EISDIR: illegal operation on a directory, read') as NodeJS.ErrnoException;
+    err.code = 'EISDIR';
+    vi.mocked(fs.readFileSync).mockImplementation(() => {
+      throw err;
+    });
+
+    expect(() => {
+      new Input();
+    }).toThrow('No URL provided and no CNAME file found');
+  });
+
+  it('prefers explicit URL over CNAME file', () => {
+    process.env['INPUT_URL'] = 'explicit.com';
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'false';
+    process.env['GITHUB_WORKSPACE'] = '/tmp/test-repo';
+
+    const input = new Input();
+
+    expect(input.url).toEqual(['explicit.com']);
   });
 });
