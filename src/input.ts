@@ -35,9 +35,14 @@ export default class Input {
     try {
       const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
       const cnamePath = path.join(workspace, 'CNAME');
-      const content = fs.readFileSync(cnamePath, 'utf8').trim();
-      if (content) {
-        return [content];
+      const content = fs.readFileSync(cnamePath, 'utf8');
+      const firstNonEmptyLine = content
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .find((line) => line !== '');
+
+      if (firstNonEmptyLine) {
+        return [firstNonEmptyLine];
       }
     } catch (error) {
       const code = (error as NodeJS.ErrnoException).code;
