@@ -22,7 +22,13 @@ inputs:
     description: 'If true, save a screenshot of the site'
 outputs:
   wayback_url:
-    description: 'The Wayback Machine URL'
+    description: 'The Wayback Machine URL of the last successful capture in the run.'
+  wayback_urls:
+    description: 'Newline-separated list of Wayback Machine URLs for every successful capture in the run.'
+  screenshot_url:
+    description: 'The screenshot URL of the last successful capture (when saveScreenshot is true).'
+  screenshot_urls:
+    description: 'Newline-separated list of screenshot URLs for every capture that produced one.'
 runs:
   using: 'node24'
   main: 'dist/index.mjs'

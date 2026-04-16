@@ -1,86 +1,105 @@
-import fs from 'node:fs';
-import os from 'node:os';
 import type Input from './input';
-import type { SaveStatus } from './types';
+import type { SaveResult, SaveStatus } from './types';
 import log from './utils/logger';
+
+const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+const DEFAULT_POLL_INTERVAL_MS = 5_000;
+const DEFAULT_POLL_TIMEOUT_MS = 3 * 60_000;
 
 export default class WayBack {
   private static readonly baseWaybackUrl = 'https://web.archive.org/save';
+  // The anonymous save endpoint returns the SPN2 HTML progress page. The job
+  // id is embedded in a `spn.watchJob("<guid>", ...)` call inside a <script>
+  // tag. SPN2 GUIDs look like "spn2-<40 hex>" but older/non-SPN2 flows used
+  // other 4-char prefixes, so match any 4 chars from the known alphabet.
   private static readonly statusGuidRegex =
     /watchJob\("(?<guid>[0-9nps]{4}-[0-9a-f]{40})/;
-  private saveErrors: boolean;
-  private saveOutlinks: boolean;
-  private saveScreenshot: boolean;
+  private readonly input: Input;
+  private readonly pollIntervalMs: number;
+  private readonly pollTimeoutMs: number;
+  private readonly requestTimeoutMs: number;
 
-  constructor(input: Input) {
-    this.saveErrors = input.saveErrors;
-    this.saveOutlinks = input.saveOutlinks;
-    this.saveScreenshot = input.saveScreenshot;
+  constructor(
+    input: Input,
+    options: {
+      pollIntervalMs?: number;
+      pollTimeoutMs?: number;
+      requestTimeoutMs?: number;
+    } = {}
+  ) {
+    this.input = input;
+    this.pollIntervalMs = options.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
+    this.pollTimeoutMs = options.pollTimeoutMs ?? DEFAULT_POLL_TIMEOUT_MS;
+    this.requestTimeoutMs =
+      options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
   }
 
-  public async save(url: string): Promise<void> {
+  public async save(url: string): Promise<SaveResult> {
     log.info(`Starting archive process for URL: ${url}`);
 
-    const requestUrl = `${WayBack.baseWaybackUrl}/${url}`;
     const form = new FormData();
     form.append('url', url);
 
-    // Log the capture options being used
     const captureOptions: string[] = [];
-    if (this.saveErrors) {
-      form.append('capture_all', 'on');
+    if (this.input.saveErrors) {
+      form.append('capture_all', '1');
       captureOptions.push('errors');
     }
-    if (this.saveOutlinks) {
-      form.append('capture_outlinks', 'on');
+    if (this.input.saveOutlinks) {
+      form.append('capture_outlinks', '1');
       captureOptions.push('outlinks');
     }
-    if (this.saveScreenshot) {
-      form.append('capture_screenshot', 'on');
+    if (this.input.saveScreenshot) {
+      form.append('capture_screenshot', '1');
       captureOptions.push('screenshot');
     }
-
     if (captureOptions.length > 0) {
       log.info(`Capture options enabled: ${captureOptions.join(', ')}`);
     } else {
       log.info('Using default capture options');
     }
 
-    try {
-      log.info('Sending archive request to Wayback Machine...');
-      const res = await fetch(requestUrl, {
-        method: 'POST',
-        body: form,
-        headers: {
-          'User-Agent': 'https://github.com/JamieMagee/wayback',
-        },
-      });
+    log.info('Sending archive request to Wayback Machine...');
+    const res = await this.fetchWithTimeout(WayBack.baseWaybackUrl, {
+      method: 'POST',
+      body: form,
+      headers: this.buildHeaders(),
+    });
 
-      if (!res.ok) {
-        log.error(`Archive request failed with status: ${res.status}`);
-        await this.handleErrorResponse(res);
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      log.info('Archive request submitted successfully, extracting job ID...');
-      const responseText = await res.text();
-      const match = WayBack.statusGuidRegex.exec(responseText);
-      if (match?.groups?.['guid']) {
-        const guid = match.groups?.['guid'];
-        log.info(`Job ID extracted: ${guid}`);
-        log.info('Monitoring archive job status...');
-        const saveStatus = await this.pollStatus(guid);
-        this.handleStatusResponse(saveStatus);
-      } else {
-        log.error('Unable to extract job ID from response');
-        throw new Error('Unable to fetch status');
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        log.error(`Archive process failed: ${err.message}`);
-      }
-      throw err;
+    if (!res.ok) {
+      await this.handleErrorResponse(res);
+      throw new Error(
+        `Archive request failed with HTTP status ${res.status} for ${url}`
+      );
     }
+
+    const jobId = await this.extractJobId(res, url);
+    log.info(`Job ID: ${jobId}`);
+    log.info('Monitoring archive job status...');
+    const saveStatus = await this.pollStatus(jobId);
+    return this.interpretStatus(url, saveStatus);
+  }
+
+  private async extractJobId(res: Response, url: string): Promise<string> {
+    const html = await res.text();
+    const match = WayBack.statusGuidRegex.exec(html);
+    const guid = match?.groups?.['guid'];
+    if (!guid) {
+      throw new Error(
+        `Unable to extract job ID from Wayback response for ${url}. The URL may have hit the daily capture limit, or the response format may have changed.`
+      );
+    }
+    return guid;
+  }
+
+  private buildHeaders(): Record<string, string> {
+    // NOTE: do NOT send `Accept: application/json`. Doing so puts SPN2 into its
+    // authenticated-API mode and causes a 401 for anonymous requests. Omitting
+    // it lets anonymous captures succeed; the status endpoint still returns
+    // JSON regardless of the Accept header.
+    return {
+      'User-Agent': 'https://github.com/JamieMagee/wayback',
+    };
   }
 
   private async handleErrorResponse(response: Response): Promise<void> {
@@ -104,81 +123,107 @@ export default class WayBack {
     }
   }
 
-  private handleStatusResponse(saveStatus: SaveStatus): void {
+  private interpretStatus(
+    requestedUrl: string,
+    saveStatus: SaveStatus
+  ): SaveResult {
     log.info(`Archive job completed with status: ${saveStatus.status}`);
 
     switch (saveStatus.status) {
       case 'success': {
-        log.info('Archive successfully created!');
-        const archiveUrl = this.getArchiveUrl(saveStatus);
+        if (!saveStatus.timestamp || !saveStatus.original_url) {
+          throw new Error(
+            `Wayback Machine reported success but response is missing timestamp or original_url (job ${saveStatus.job_id}).`
+          );
+        }
+        const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
         log.info(`Archive URL: ${archiveUrl}`);
-        break;
+        if (saveStatus.screenshot) {
+          log.info(`Screenshot URL: ${saveStatus.screenshot}`);
+        }
+        const result: SaveResult = {
+          url: requestedUrl,
+          archiveUrl,
+          timestamp: saveStatus.timestamp,
+          originalUrl: saveStatus.original_url,
+        };
+        if (saveStatus.screenshot) {
+          result.screenshotUrl = saveStatus.screenshot;
+        }
+        return result;
       }
-      case 'error':
-        log.error('Archive job failed with an error');
-        log.debug('Full error details:', saveStatus);
-        break;
+      case 'error': {
+        const detail = [
+          saveStatus.status_ext,
+          saveStatus.message,
+          saveStatus.exception,
+        ]
+          .filter(Boolean)
+          .join(' | ');
+        throw new Error(
+          `Wayback Machine failed to archive ${requestedUrl}: ${
+            detail || 'no error detail provided'
+          }`
+        );
+      }
       default:
-        log.warn(`Unexpected archive status: ${saveStatus.status}`);
-        log.debug('Full status details:', saveStatus);
+        throw new Error(
+          `Unexpected Wayback Machine status '${saveStatus.status}' for ${requestedUrl}.`
+        );
     }
   }
 
   private async pollStatus(guid: string): Promise<SaveStatus> {
     log.debug(`Starting status polling for job: ${guid}`);
-    let saveStatus = await this.getSaveStatus(guid);
-    let pollCount = 1;
+    const deadline = Date.now() + this.pollTimeoutMs;
+    let pollCount = 0;
 
-    while (saveStatus.status === 'pending') {
-      log.info(`Archive job still in progress... (check ${pollCount})`);
-      await this.sleep(2000);
-      saveStatus = await this.getSaveStatus(guid);
+    while (true) {
       pollCount++;
+      const saveStatus = await this.getSaveStatus(guid);
+      if (saveStatus.status !== 'pending') {
+        log.info(`Status polling completed after ${pollCount} check(s)`);
+        return saveStatus;
+      }
+      if (Date.now() >= deadline) {
+        throw new Error(
+          `Timed out after ${Math.round(this.pollTimeoutMs / 1000)}s waiting for Wayback Machine job ${guid} to complete.`
+        );
+      }
+      log.info(`Archive job still in progress... (check ${pollCount})`);
+      await this.sleep(this.pollIntervalMs);
     }
-
-    log.info(`Status polling completed after ${pollCount} check(s)`);
-    return saveStatus;
   }
 
   private async getSaveStatus(guid: string): Promise<SaveStatus> {
-    try {
-      log.debug(`Checking status for job: ${guid}`);
-      const response = await fetch(`${WayBack.baseWaybackUrl}/status/${guid}`);
+    log.debug(`Checking status for job: ${guid}`);
+    const response = await this.fetchWithTimeout(
+      `${WayBack.baseWaybackUrl}/status/${guid}`,
+      { headers: this.buildHeaders() }
+    );
 
-      if (!response.ok) {
-        log.error(`Status check failed with HTTP status: ${response.status}`);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const status = (await response.json()) as SaveStatus;
-      log.debug(`Current job status: ${status.status}`);
-      return status;
-    } catch (err) {
-      if (err instanceof Error) {
-        log.error(`Failed to get save status: ${err.message}`);
-      }
-      throw err;
+    if (!response.ok) {
+      throw new Error(
+        `Status check failed with HTTP status ${response.status} for job ${guid}`
+      );
     }
+
+    const status = (await response.json()) as SaveStatus;
+    log.debug(`Current job status: ${status.status}`);
+    return status;
+  }
+
+  private async fetchWithTimeout(
+    url: string,
+    init: RequestInit
+  ): Promise<Response> {
+    return fetch(url, {
+      ...init,
+      signal: AbortSignal.timeout(this.requestTimeoutMs),
+    });
   }
 
   private async sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  private getArchiveUrl(saveStatus: SaveStatus): string | undefined {
-    // original_url is present when status === 'success'
-    const archiveUrl = `https://web.archive.org/web/${saveStatus.timestamp}/${saveStatus.original_url}`;
-
-    // Set output using workflow command equivalent
-    const githubOutput = process.env['GITHUB_OUTPUT'];
-    if (githubOutput) {
-      log.debug('Setting GitHub Actions output variable');
-      fs.appendFileSync(githubOutput, `wayback_url=${archiveUrl}${os.EOL}`, {
-        encoding: 'utf8',
-      });
-      log.debug('GitHub Actions output variable set successfully');
-    }
-
-    return archiveUrl;
   }
 }

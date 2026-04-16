@@ -70,8 +70,15 @@ Defaults to `false`.
 
 ### `wayback_url`
 
-If the save attempt was successful, this parameter is set to the Wayback Machine URL.
-If the attempt failed, it is set to an empty string.
+Wayback Machine URL of the last successful capture in the run. Empty if no capture succeeded.
+
+### `wayback_urls`
+
+Newline-separated list of Wayback Machine URLs for every successful capture in the run. Useful when archiving multiple URLs.
+
+### `screenshot_url` / `screenshot_urls`
+
+Screenshot URL (or newline-separated list) when `saveScreenshot` is `true` and the capture produced a screenshot.
 
 ## License
 
