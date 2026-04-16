@@ -85,6 +85,22 @@ describe('input.spec.ts', () => {
     }).toThrow('No URL provided and no CNAME file found');
   });
 
+  it('falls back to clear error when CNAME read fails with an unexpected error', () => {
+    process.env['INPUT_SAVEERRORS'] = 'true';
+    process.env['INPUT_SAVEOUTLINKS'] = 'false';
+    process.env['INPUT_SAVESCREENSHOT'] = 'false';
+
+    const err = new Error('EISDIR: illegal operation on a directory, read') as NodeJS.ErrnoException;
+    err.code = 'EISDIR';
+    vi.mocked(fs.readFileSync).mockImplementation(() => {
+      throw err;
+    });
+
+    expect(() => {
+      new Input();
+    }).toThrow('No URL provided and no CNAME file found');
+  });
+
   it('prefers explicit URL over CNAME file', () => {
     process.env['INPUT_URL'] = 'explicit.com';
     process.env['INPUT_SAVEERRORS'] = 'true';

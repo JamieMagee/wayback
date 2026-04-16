@@ -44,11 +44,9 @@ export default class Input {
       if (firstNonEmptyLine) {
         return [firstNonEmptyLine];
       }
-    } catch (error) {
-      const code = (error as NodeJS.ErrnoException).code;
-      if (code !== 'ENOENT' && code !== 'ENOTDIR') {
-        throw error;
-      }
+    } catch {
+      // Ignore filesystem errors; validate() will produce a clear error
+      // message if no URL is available from any source.
     }
     return [];
   }
