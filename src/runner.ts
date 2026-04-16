@@ -2,6 +2,7 @@ import Input from './input';
 import type { SaveResult } from './types';
 import log from './utils/logger';
 import { setOutput } from './utils/outputs';
+import { type SummaryFailure, writeStepSummary } from './utils/summary';
 import WayBack from './wayback';
 
 export default async function run(): Promise<void> {
@@ -15,7 +16,7 @@ export default async function run(): Promise<void> {
 
   const wayback = new WayBack(input);
   const results: SaveResult[] = [];
-  const failures: { url: string; error: Error }[] = [];
+  const failures: SummaryFailure[] = [];
 
   for (const url of input.url) {
     try {
@@ -28,6 +29,7 @@ export default async function run(): Promise<void> {
   }
 
   writeOutputs(results);
+  writeStepSummary(results, failures);
 
   if (failures.length > 0) {
     const summary = failures
