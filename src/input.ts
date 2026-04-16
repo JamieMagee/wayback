@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 
 export default class Input {
   readonly url: string[];
@@ -33,7 +34,7 @@ export default class Input {
   private detectFromCname(): string[] {
     try {
       const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
-      const cnamePath = `${workspace}/CNAME`;
+      const cnamePath = path.join(workspace, 'CNAME');
       const content = fs.readFileSync(cnamePath, 'utf8').trim();
       if (content) {
         return [content];
