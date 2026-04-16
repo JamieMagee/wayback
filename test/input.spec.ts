@@ -74,8 +74,10 @@ describe('input.spec.ts', () => {
     process.env['INPUT_SAVEOUTLINKS'] = 'false';
     process.env['INPUT_SAVESCREENSHOT'] = 'false';
 
+    const err = new Error('ENOENT: no such file or directory') as NodeJS.ErrnoException;
+    err.code = 'ENOENT';
     vi.mocked(fs.readFileSync).mockImplementation(() => {
-      throw new Error('ENOENT');
+      throw err;
     });
 
     expect(() => {
