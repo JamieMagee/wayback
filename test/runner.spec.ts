@@ -5,6 +5,7 @@ import WayBack from '../src/wayback';
 
 vi.mock('@actions/core', () => ({
   setFailed: vi.fn(),
+  setOutput: vi.fn(),
   debug: vi.fn(),
   notice: vi.fn(),
   warning: vi.fn(),
@@ -12,10 +13,8 @@ vi.mock('@actions/core', () => ({
 }));
 vi.mock('../src/input.ts');
 vi.mock('../src/wayback.ts');
-vi.mock('../src/utils/outputs.ts', () => ({ setOutput: vi.fn() }));
 vi.mock('../src/utils/summary.ts', () => ({ writeStepSummary: vi.fn() }));
 
-import { setOutput } from '../src/utils/outputs';
 import { writeStepSummary } from '../src/utils/summary';
 
 describe('runner.spec.ts', () => {
@@ -39,11 +38,12 @@ describe('runner.spec.ts', () => {
     await run();
 
     expect(save).toHaveBeenCalledWith('example.com');
-    expect(vi.mocked(setOutput)).toHaveBeenCalledWith(
+    expect(vi.mocked(core.setOutput)).toHaveBeenCalledWith(
       'wayback_url',
       'https://web.archive.org/web/X/example.com'
     );
     expect(core.setFailed).not.toHaveBeenCalled();
+
   });
 
   it('passes results and failures to the step summary', async () => {
@@ -79,7 +79,7 @@ describe('runner.spec.ts', () => {
     expect(core.setFailed).toHaveBeenCalledWith(
       expect.stringContaining('Failed to archive')
     );
-    expect(vi.mocked(setOutput)).not.toHaveBeenCalled();
+    expect(vi.mocked(core.setOutput)).not.toHaveBeenCalled();
   });
 
   it('emits screenshot outputs when available', async () => {
@@ -98,7 +98,7 @@ describe('runner.spec.ts', () => {
 
     await run();
 
-    expect(vi.mocked(setOutput)).toHaveBeenCalledWith(
+    expect(vi.mocked(core.setOutput)).toHaveBeenCalledWith(
       'screenshot_url',
       'http://web.archive.org/screenshot/example.com'
     );

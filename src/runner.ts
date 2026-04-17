@@ -2,7 +2,6 @@ import * as core from '@actions/core';
 import Input from './input';
 import type { SaveResult } from './types';
 import log from './utils/logger';
-import { setOutput } from './utils/outputs';
 import { type SummaryFailure, writeStepSummary } from './utils/summary';
 import WayBack from './wayback';
 
@@ -52,15 +51,15 @@ function writeOutputs(results: SaveResult[]): void {
   if (!last) {
     return;
   }
-  setOutput('wayback_url', last.archiveUrl);
-  setOutput('wayback_urls', results.map((r) => r.archiveUrl).join('\n'));
+  core.setOutput('wayback_url', last.archiveUrl);
+  core.setOutput('wayback_urls', results.map((r) => r.archiveUrl).join('\n'));
 
   const screenshots = results
     .map((r) => r.screenshotUrl)
     .filter((u): u is string => typeof u === 'string' && u.length > 0);
   const lastScreenshot = screenshots[screenshots.length - 1];
   if (lastScreenshot) {
-    setOutput('screenshot_url', lastScreenshot);
-    setOutput('screenshot_urls', screenshots.join('\n'));
+    core.setOutput('screenshot_url', lastScreenshot);
+    core.setOutput('screenshot_urls', screenshots.join('\n'));
   }
 }
