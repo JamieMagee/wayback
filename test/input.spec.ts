@@ -12,7 +12,12 @@ describe('input.spec.ts', () => {
     delete process.env['INPUT_SAVEERRORS'];
     delete process.env['INPUT_SAVEOUTLINKS'];
     delete process.env['INPUT_SAVESCREENSHOT'];
+    delete process.env['INPUT_SKIPFIRSTARCHIVE'];
+    delete process.env['INPUT_IFNOTARCHIVEDWITHIN'];
     delete process.env['GITHUB_WORKSPACE'];
+    // Set defaults that the Actions runner would normally inject from action.yml
+    process.env['INPUT_SKIPFIRSTARCHIVE'] = 'false';
+    process.env['INPUT_IFNOTARCHIVEDWITHIN'] = '';
   });
 
   it('works for multiple urls', () => {

@@ -1,7 +1,15 @@
 import { vi } from 'vitest';
+import * as core from '@actions/core';
 import run from '../src/runner';
 import WayBack from '../src/wayback';
 
+vi.mock('@actions/core', () => ({
+  setFailed: vi.fn(),
+  debug: vi.fn(),
+  notice: vi.fn(),
+  warning: vi.fn(),
+  error: vi.fn(),
+}));
 vi.mock('../src/input.ts');
 vi.mock('../src/wayback.ts');
 vi.mock('../src/utils/outputs.ts', () => ({ setOutput: vi.fn() }));
@@ -11,12 +19,6 @@ import { setOutput } from '../src/utils/outputs';
 import { writeStepSummary } from '../src/utils/summary';
 
 describe('runner.spec.ts', () => {
-  const exitSpy = vi
-    .spyOn(process, 'exit')
-    .mockImplementation(((code?: number) => {
-      throw new Error(`process.exit:${code}`);
-    }) as never);
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -41,7 +43,7 @@ describe('runner.spec.ts', () => {
       'wayback_url',
       'https://web.archive.org/web/X/example.com'
     );
-    expect(exitSpy).not.toHaveBeenCalled();
+    expect(core.setFailed).not.toHaveBeenCalled();
   });
 
   it('passes results and failures to the step summary', async () => {
@@ -65,7 +67,7 @@ describe('runner.spec.ts', () => {
     expect(failures).toHaveLength(0);
   });
 
-  it('continues after a per-URL failure and exits 1 at the end', async () => {
+  it('continues after a per-URL failure and calls setFailed at the end', async () => {
     const save = vi.fn().mockRejectedValue(new Error('boom'));
     vi.mocked(WayBack).mockImplementation(
       function () {
@@ -73,7 +75,10 @@ describe('runner.spec.ts', () => {
       } as unknown as typeof WayBack
     );
 
-    await expect(run()).rejects.toThrow('process.exit:1');
+    await run();
+    expect(core.setFailed).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to archive')
+    );
     expect(vi.mocked(setOutput)).not.toHaveBeenCalled();
   });
 
