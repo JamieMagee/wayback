@@ -22,7 +22,7 @@
     "@tsconfig/strictest": "2.0.8",
     "@types/node": "24.12.2",
     "esbuild": "0.28.0",
-    "nock": "14.0.12",
+    "nock": "14.0.13",
     "typescript": "6.0.3",
     "vitest": "4.1.4"
   }
