@@ -26,6 +26,9 @@ export default async function run(): Promise<void> {
       log.error(`Archive process failed for ${url}: ${err.message}`);
       failures.push({ url, error: err });
     }
+    if (input.delayBetweenRequests) {
+      await Promise.delay(input.delayBetweenRequests);
+    }
   }
 
   writeOutputs(results);
