@@ -24,6 +24,6 @@
     "esbuild": "0.28.0",
     "nock": "14.0.15",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   }
 }
