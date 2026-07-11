@@ -16,11 +16,11 @@
     "lint": "biome check ./src"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.2",
+    "@biomejs/biome": "2.5.3",
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "esbuild": "0.28.1",
     "nock": "14.0.16",
     "typescript": "6.0.3",
