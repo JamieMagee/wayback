@@ -23,7 +23,7 @@
     "@types/node": "24.13.3",
     "esbuild": "0.28.1",
     "nock": "14.0.16",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "4.1.10"
   }
 }
