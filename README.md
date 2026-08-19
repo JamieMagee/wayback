@@ -75,6 +75,10 @@ Defaults to `false`.
 
 Only capture the URL if the most recent existing capture is older than this value. Accepts SPN2 timedelta strings (e.g. `1d`, `3h 20m`) or plain seconds (e.g. `3600`). Supports a comma-separated pair (e.g. `1d,7d`) to apply a different value to outlinks.
 
+### `delayBetweenRequests`
+
+Time, in milliseconds, to wait between web requests.  Use this to work with rate-limited hosting.
+
 ## Outputs
 
 ### `wayback_url`
