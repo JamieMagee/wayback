@@ -20,10 +20,10 @@
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/node24": "24.0.5",
     "@tsconfig/strictest": "2.0.8",
-    "@types/node": "24.13.4",
+    "@types/node": "24.13.5",
     "esbuild": "0.28.2",
     "nock": "14.0.17",
     "typescript": "7.0.2",
-    "vitest": "5.0.0"
+    "vitest": "5.0.1"
   }
 }
