@@ -66,11 +66,11 @@ describe('wayback.spec.ts', () => {
       const forbiddenAuth = vi.fn();
       waybackScope
         .post('/save')
-        .reply(function () {
-          if (this.req.headers['accept'] === 'application/json') {
+        .reply((request: Request) => {
+          if (request.headers.get('accept') === 'application/json') {
             forbiddenAccept();
           }
-          if (this.req.headers['authorization']) {
+          if (request.headers.get('authorization')) {
             forbiddenAuth();
           }
           return [200, htmlResponse];
