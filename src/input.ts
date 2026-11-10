@@ -18,12 +18,16 @@ export default class Input {
   readonly ifNotArchivedWithin = this.getInput('ifNotArchivedWithin', {
     trimWhitespace: true,
   });
+  readonly delayBetweenRequests;
 
   constructor() {
     const urls = this.getMultilineInput('url', {
       required: false,
       trimWhitespace: true,
     });
+
+    const delayInput = this.getInput('delayBetweenRequests', { trimWhitespace: true });
+    this.delayBetweenRequests = delayInput ? Number(delayInput) : null;
 
     this.url = urls.length > 0 ? urls : this.detectFromCname();
     this.validate();
